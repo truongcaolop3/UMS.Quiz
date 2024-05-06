@@ -1,0 +1,105 @@
+﻿@{
+    ViewBag.Title = "Quản lý khối kiến thức";
+}
+<div class="box box-primary  shadow-lg p-3 mb-5 rounded">
+    <div class="box-body">
+        <!-- Form nhập đầu vào tìm kiếm -->
+        <form id="formSearch" action="#">
+            <div class="container-fluid row p-0">
+                <div class="col-sm-2">
+                    <label for="recipient-name" class="col-form-label fs-5">Học phần:</label>
+                    <select class="form-control" id="mySelect" overflow-y: scroll; name="category" disabled>
+                        
+                        <option>Toán cao cấp</option>
+                        <option>Lịch sử đảng</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <label for="recipient-name" class="col-form-label fs-5">Khối kiến thức:</label>
+                    <select class="form-control" id="mySelect" overflow-y: scroll; name="category">
+                        <option>-- Tất khối kiến thức --</option>
+                        <option>Tập hợp và ánh xạ</option>
+                        <option>Tập hợp và ánh xạ</option>
+                    </select>
+                </div>
+                <div class=" col-sm-8  ">
+
+                    <label for="recipient-name" class="col-form-label fs-5 d-block">Tìm kiếm (khối kiến thức và học phần):</label>
+                    <div class="d-flex align-items-center">
+                        <input name="searchValue" type="text" class="form-control"
+                               placeholder="Nội dung cần tìm kiếm">
+                        <div class="d-flex align-items-end justify-content-start">
+                            <button class="btn btn-info" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Hiển thị kết quả tìm kiếm -->
+        <div>
+            <p style="margin:10px 0 10px 0">
+                Có <strong>1,024</strong> khối kiến thức trong tổng số <strong>100</strong> trang
+            </p>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover ">
+                    <thead>
+                        <tr class="bg-light ">
+                            <th style="width:30px">STT</th>
+                            <th>Tên khối kiến thức</th>
+                            <th>Tên học phần</th>
+                            
+                            <th style="width:110px " class="text-center">
+                                <a href="~/Knowledges/Create" class="btn btn-success " style="padding: 1px 6px; font-size: 20px">
+                                    <i class="bi bi-plus-lg"></i> 
+                                </a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 1; i <= 10; i++)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>Tập hợp và ánh xạ</td>
+                                <td>Toán Cao cấp</td>
+
+                                <td class="text-center">
+                                    <a href="~/Knowledges/Edit" class="btn btn-xs btn-info">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <a href="~/Knowledges/Delete" class="btn btn-xs btn-danger">
+                                        <i class="bi bi-x-circle-fill"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <nav aria-label="Page navigation example ">
+                <ul class="pagination d-flex justify-content-center">
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+</div>

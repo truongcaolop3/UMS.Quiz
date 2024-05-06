@@ -1,0 +1,59 @@
+﻿@{
+}
+<div class="box box-primary  shadow-lg p-3 mb-4 rounded">
+    <div class="box-body">
+        @* <h1 class="m-0 pt-3 fs-4 fw-normal border-bottom"> Sửa khối kiến thức</h1> *@
+        <form>
+            <div class="form-group py-2">
+                <label for="recipient-name" class="col-form-label fs-5">Học phần</label>
+                <!-- UX "tồi" => Nên thay bằng radio hoặc checkbox -->
+                <select class="form-control" name="category" id="categorySelect">
+                    <option>-- Chọn học phần --</option>
+                    <option>Toán cao cấp</option>
+                    <option>Lịch sử đảng</option>
+                    <option>Toán cao cấp</option>
+                </select>
+            </div>
+            <div class="form-group py-2">
+                <label for="recipient-name" class="col-form-label fs-5">Cấu trúc đề</label>
+                <!-- UX "tồi" => Nên thay bằng radio hoặc checkbox -->
+                <select class="form-control" name="category" id="categorySelect">
+                    <option>-- Chọn cấu trúc đề --</option>
+                    <option>Toán cao cấp</option>
+                    <option>Lịch sử đảng</option>
+                    <option>Toán cao cấp</option>
+                </select>
+            </div>
+            <div class="form-group py-2">
+                <label for="recipient-name" class="col-form-label fs-5">Đề thi</label>
+                <!-- UX "tồi" => Nên thay bằng radio hoặc checkbox -->
+                <select class="form-control" name="category" id="categorySelect">
+                    <option>-- Chọn loại đề thi --</option>
+                    <option>Toán cao cấp</option>
+                    <option>Lịch sử đảng</option>
+                    <option>Toán cao cấp</option>
+                </select>
+            </div>
+            <div class="col-12 d-flex justify-content-lg-between">
+
+                <div class="form-group datetimepicker py-2 pe-3 col-6" data-mdb-inline="true">
+                    <label for="recipient-name" class="col-form-label fs-5">Thời gian bắt đầu</label>
+                    <input id="startDate" class="form-control" type="datetime-local" />
+                </div>
+                <div class="form-group datetimepicker py-2 ps-3 col-6" data-mdb-inline="true">
+                    <label for="recipient-name" class="col-form-label fs-5">Thời gian kết thúc</label>
+                    <input id="startDate" class="form-control" type="datetime-local" />
+                </div>
+            </div>
+            <div class="form-group py-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-floppy-o"></i> Lưu dữ liệu
+                </button>
+                <a href="~/ExamCandidates/Index" class="btn btn-light">
+                    Quay lại
+                </a>
+            </div>
+        </form>
+
+    </div>
+</div>

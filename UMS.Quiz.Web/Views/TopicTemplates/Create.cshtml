@@ -1,0 +1,99 @@
+﻿
+@{
+}
+@* Cấu trúc , học phần , thời gian *@
+<div class="box box-primary  shadow-lg p-3 mb-5 rounded">
+    <div class="box-body">
+        @* <h1 class="m-0 pt-3 fs-4 fw-normal border-bottom"> Sửa cấu trúc đề</h1> *@
+        <form>
+            <div class=" row p-0 pb-3 px-2">
+                <div class="col-sm-3 dropdown ">
+                    <label for="recipient-name" class="col-form-label fs-5">Học phần:</label>
+                    <select class="form-control dropdown-toggle text-black" name="category" data-bs-toggle="dropdown" disabled>
+                        <option>Toán</option>
+                        <option>Lý</option>
+                        <option>Hóa</option>
+                    </select>
+                </div>
+                <div class=" col-sm-7 ">
+                    <label for="recipient-name" class="col-form-label fs-5 d-block">Tên cấu trúc đề:</label>
+                    <input name="searchValue" type="text" class="form-control">
+
+                </div>
+                
+                
+                
+                <div class="col-sm-2 dropdown ">
+                    <label for="recipient-name" class="col-form-label fs-5">Thời gian thi:</label>
+                    <select class="form-control" id="mySelect" overflow-y: scroll; name="category">
+                        <option>15</option>
+                        <option>45</option>
+                        <option>60</option>
+                        <option>90</option>
+                        <option>120</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row py-2 px-3">
+
+                <h5 class="px-0 pt-3 ">Cơ cấu tổ chức câu hỏi trong mẫu đề</h5>
+                <table class="table table-bordered " id="myTable">
+                    <thead>
+                        <tr class="bg-light">
+                            <th class="col-9 text-center align-content-center">Khối kiến thức câu hỏi</th>
+                            <th class="text-md-center">Mức điểm số của câu hỏi đưa vào bộ đề</th>
+                            <th class="text-md-center">Số lượng câu hỏi đưa vào bộ đề</th>
+                            <th style="width: 35px" class="p-1 text-center align-content-center">
+                                <a id="addrow" href="javascript:void(0)" type="button" class="btn btn-outline-success text-black add-row" style="padding: 1px 6px; font-size: 20px">
+                                    <i class="bi bi-plus-lg"></i>
+                                </a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="myTableBody">
+                        @for (int i = 1; i <= 3; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <p>Toán cao cấp 1</p>
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control" placeholder="" aria-label="Last name" value="0">
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control" placeholder="" aria-label="Last name" value="0">
+                                </td>
+                                <td style="width:35px " class="p-1 ">
+                                    <a href="#" class="btn btn-light text-black  delete-row " style="padding: 5px 5px; font-size: 20px">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="input-group pt-2 p-0 d-flex justify-content-end">
+
+                <div class="input-group-btn mx-2">
+                    <a href="#" class="btn btn-primary">
+                        Lưu cấu trúc
+                    </a>
+                </div>
+
+                <div class="input-group-btn ms-2">
+                    <a href="~/TopicTemplates/Index" class="btn btn-light">
+                        Quay lại
+                    </a>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+
+
+

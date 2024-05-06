@@ -1,0 +1,120 @@
+﻿@{
+}
+@* Cấu trúc , học phần , thời gian *@
+<div class="box box-primary  shadow-lg p-3 mb-5 rounded">
+    <div class="box-body">
+        @* <h1 class="m-0 pt-3 fs-4 fw-normal border-bottom"> Sửa cấu trúc đề</h1> *@
+        <form>
+            <div class=" p-0 px-1 mx-1">
+                <h5 class="fs-5 border-bottom p-0">Thông tin về cấu trúc bộ đề</h5>
+                <div class="d-flex justify-content-start mx-5 ">
+                    <div class="text-end mx-2 fw-bold">
+                        <p>Học phần:</p>
+                        <p>Tên cấu trúc đề:</p>
+                        <p>Thời gian thi:</p>
+                    </div>
+                    <div class="text-start mx-2">
+                        <p>Phép tính vi phân hàm một biến</p>
+                        <p>TOAN-2024</p>
+                        <p>45</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row py-2 px-3">
+
+                <h5 class="px-0  border-bottom ">Cơ cấu tổ chức câu hỏi trong mẫu đề</h5>
+                <table class="table table-bordered " id="myTable">
+                    <thead>
+                        <tr class="bg-light">
+                            <th style="width:30px" class=" align-content-center">STT</th>
+                            <th class="col-9 text-center align-content-center">Khối kiến thức câu hỏi</th>
+                            <th class="text-md-center">Mức điểm số của câu hỏi đưa vào bộ đề</th>
+                            <th class="text-md-center">Số lượng câu hỏi đưa vào bộ đề</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="myTableBody">
+                        @for (int i = 1; i <= 3; i++)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>
+                                    <p class="m-0">Toán cao cấp 1</p>
+                                </td>
+                                <td>
+                                    <p class="m-0">@i</p>
+                                </td>
+                                <td>
+                                    <p class="m-0">5</p>
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="  p-0 mx-1">
+                <h5 class="fs-5 border-bottom p-0">Tạo bộ đề</h5>
+                <div class=" mx-2 ">
+                    <div>Lưu ý:</div>
+                    <ul class="mx-2">
+                        <li class="mx-1"> Sau khi nhập số lượng để thi cần tạo, nhấn nút <strong>Tạo bộ đề thi</strong> để hệ thống tiền hành tạo bộ đề theo cấu trúc</li>
+                        <li class="mx-1"> Mỗi lần hệ thống chỉ cho phép tạo tối đa 10 bộ đề</li>
+                        <li class="mx-1"> Trong quá trình hệ thống đang tạo đề thi, <strong class="text-danger text-uppercase">Tuyệt đối không được thoát ngang chương trình</strong> để tránh sai sót có thể xảy ra lỗi dữ liệu của bộ đề</li>
+                    </ul>
+                </div>
+                <form>
+                    <div class="d-flex justify-content-start ">
+                        <div class="text-end py-1 mx-2 fw-bold col-3">
+                            <p class="align-content-center my-2">Tên đề bộ đề thi cần tạo: </p>
+                            <p class="align-content-center my-2">Số lượng bộ đề cần tạo: </p>
+                        </div>
+                        <div class=" my-1 mx-2 col-7">
+                            <div class="my-1 ">
+                                <input name="" type="text" class="col-10"
+                                       value="Tên đề thi" style=" padding:2px 4px">
+                            </div>
+                            <div class="my-1 d-flex justify-content-start ">
+
+                                <input name="" type="text" class=""
+                                       value="1" style=" padding:2px 4px">
+                                <div class="mx-2">
+                                    <a href="#" class="btn btn-primary mx-1" style=" padding:3px 4px">
+                                       Tạo bộ đề thi
+                                    </a>
+                                    <a href="~/TopicTemplates/Index" class="btn btn-light mx-1" style=" padding:3px 4px">
+                                        Quay lại danh sách cấu trúc đề
+                                    </a>
+                                    <a href="~/Exam/Index" class="btn btn-light mx-1" style=" padding:3px 4px">
+                                        Quay lại thư viện bộ đề
+                                    </a>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            @* <div class="input-group pt-2 p-0 d-flex justify-content-end">
+
+                <div class="input-group-btn mx-2">
+                    <a href="#" class="btn btn-primary">
+                        Lưu cấu trúc
+                    </a>
+                </div>
+
+                <div class="input-group-btn ms-2">
+                    <a href="#" class="btn btn-light">
+                        Quay lại
+                    </a>
+                </div>
+            </div> *@
+
+        </form>
+
+    </div>
+</div>
+

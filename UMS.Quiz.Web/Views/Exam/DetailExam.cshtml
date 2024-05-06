@@ -1,0 +1,78 @@
+﻿@{
+}
+@* Cấu trúc , học phần , thời gian *@
+<div class="box box-primary  shadow-lg p-3 mb-5 rounded">
+    <div class="box-body">
+        @* <h1 class="m-0 pt-3 fs-4 fw-normal border-bottom"> Sửa cấu trúc đề</h1> *@
+        <form>
+            <div class=" p-0 px-1 mx-1">
+                <h5 class="fs-5 border-bottom p-0">Thông tin về cấu trúc bộ đề</h5>
+                <div class="d-flex justify-content-start mx-5 ">
+                    <div class="text-end mx-2 fw-bold">
+                        <p>Học phần:</p>
+                        <p>Tên cấu trúc đề:</p>
+                        <p>Tên đề thi:</p>
+                        <p>Thời gian thi:</p>
+                    </div>
+                    <div class="text-start mx-2">
+                        <p>Phép tính vi phân hàm một biến</p>
+                        <p>Tên cấu trúc đề</p>
+                        <p>Tên đề thi</p>
+
+                        <p>45</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row py-2 px-3">
+
+                <h5 class="px-0  border-bottom ">Cơ cấu tổ chức câu hỏi trong mẫu đề</h5>
+                <table class="table table-bordered " id="myTable">
+                    <thead>
+                        <tr class="bg-light">
+                            <th style="width:30px" class=" align-content-center">STT</th>
+                            <th class="col-9 text-center align-content-center">Khối kiến thức câu hỏi</th>
+                            <th class="text-md-center">Mức điểm số của câu hỏi đưa vào bộ đề</th>
+                            <th class="text-md-center">Số lượng câu hỏi đưa vào bộ đề</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="myTableBody">
+                        @for (int i = 1; i <= 3; i++)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>
+                                    <p class="m-0">Toán cao cấp 1</p>
+                                </td>
+                                <td>
+                                    <p class="m-0">@i</p>
+                                </td>
+                                <td>
+                                    <p class="m-0">5</p>
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="  p-0 mx-1">
+                <div class="d-flex justify-content-end ">
+                    <div class="my-1  ">
+                        <a href="~/TopicTemplates/Index" class="btn btn-primary mx-1" style=" padding:3px 4px">
+                            Quay lại danh sách cấu trúc đề
+                        </a>
+                        <a href="~/Exam/Index" class="btn btn-primary ms-1" style=" padding:3px 4px">
+                            Quay lại thư viện bộ đề
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </form>
+
+    </div>
+</div>
+

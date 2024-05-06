@@ -1,0 +1,32 @@
+﻿header{}
+.bg-husc {
+    background-color: #003c6c ;
+    /*color: white;*/
+    font-size: 16px;
+}
+.icon-header-dhkh {
+    width: 28px;
+    height: 30px;
+}
+.icon-person {
+    font-size: 1.2rem;
+}
+pat-4{
+    padding-top: 4px;
+}
+/* Thêm thanh cuộn cho phần tử có lớp 'scrollable' */
+.form-control {
+    overflow-y: auto;
+}
+td.null-cell {
+    pointer-events: none; /* Ngăn chặn sự kiện từ bàn phím hoặc chuột */
+    color: #999; /* Màu chữ xám đậm */
+}
+select:focus {
+    color: #ff0000;
+}
+.image-element-dashboard{
+    width: 60px;
+    height: 40px;
+    padding: 0px 10px;
+}

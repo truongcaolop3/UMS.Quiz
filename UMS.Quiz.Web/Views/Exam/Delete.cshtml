@@ -1,0 +1,44 @@
+﻿@{
+}
+<div class="box box-primary container">
+    <div class="box-body">
+        @* <h1 class="m-0 pt-3 fs-4 fw-normal border-bottom"> Xóa Đề thi</h1> *@
+        <form>
+            <div class="pt-3">
+                <label for="recipient-name" class="col-form-label fs-5">Nhập tên đề thi:</label>
+                <input type="text" class="form-control" id="recipient-name" disabled>
+            </div>
+            <div class="form-group py-2">
+                <label for="recipient-name" class="col-form-label ">Cấu trúc đề:</label>
+                <!-- UX "tồi" => Nên thay bằng radio hoặc checkbox -->
+                <select class="form-control" name="category" id="categorySelect" disabled>
+                    <option>-- Chọn cấu trúc đề --</option>
+                    <option>Toán cao cấp</option>
+                    <option>Lịch sử đảng</option>
+                    <option>Toán cao cấp</option>
+                </select>
+            </div>
+            <div class="form-group py-2">
+                <label for="recipient-name" class="col-form-label fs-5">Khối kiến thức:</label>
+                <!-- UX "tồi" => Nên thay bằng radio hoặc checkbox -->
+                <select class="form-control" name="category" id="categorySelect" disabled>
+                    <option>-- Chọn thời gian thi --</option>
+                    <option>15</option>
+                    <option>45</option>
+                    <option>60</option>
+                    <option>90</option>
+                    <option>120</option>
+                </select>
+            </div>
+            <div class="form-group py-2">
+                <button type="submit" class="btn btn-danger">
+                    <i class="fa fa-floppy-o"></i> Xóa
+                </button>
+                <a href="~/TopicTemplates" class="btn btn-light">
+                    Quay lại
+                </a>
+            </div>
+        </form>
+
+    </div>
+</div>

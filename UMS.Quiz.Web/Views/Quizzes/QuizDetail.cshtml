@@ -1,0 +1,161 @@
+﻿@{
+    ViewBag.Title = "Chi tiết câu hỏi";
+}
+<div class="box box-primary  shadow-lg p-3 mb-5 rounded">
+    <div class="box-body">
+        <!-- Form nhập đầu vào tìm kiếm -->
+        <form id="formSearch" action="#">
+
+            <div class="container-fluid row p-0">
+                <div class="col-sm-2">
+                    <label for="recipient-name" class="col-form-label fs-5">Học phần:</label>
+                    <select class="form-control" id="mySelect" overflow-y: scroll; name="category" disabled>
+                        <option>-- Tất cả học phần --</option>
+                        <option>Toán cao cấp</option>
+                        <option>Lịch sử đảng</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <label for="recipient-name" class="col-form-label fs-5">Khối kiến thức:</label>
+                    <select class="form-control" id="mySelect" overflow-y: scroll; name="category" disabled>
+                        <option>-- Tất khối kiến thức --</option>
+                        <option>Toán cao cấp</option>
+                        <option>Lịch sử đảng</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <label for="recipient-name" class="col-form-label fs-5">Kiểu câu hỏi:</label>
+                    <select class="form-control" id="mySelect" overflow-y: scroll; name="category">
+                        <option>-- Tất cả kiểu câu hỏi --</option>
+                        <option>Chọn một đáp án đúng</option>
+                        <option>Chọn nhiều đáp án đúng</option>
+                        <option>Nhập đáp án đúng</option>
+                    </select>
+                </div>
+                <div class=" col-sm-6  ">
+
+                    <label for="recipient-name" class="col-form-label fs-5 d-block">Tìm kiếm (khối kiến thức và học phần):</label>
+                    <div class="d-flex align-items-center">
+                        <input name="searchValue" type="text" class="form-control"
+                               placeholder="Nội dung cần tìm kiếm">
+                        <div class="d-flex align-items-end justify-content-start">
+                            <button class="btn btn-info" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <p style="margin:10px 0 10px 0">
+            Có <strong>1,024</strong>khối kiến thức trong tổng số<strong>100</strong> trang
+        </p>
+        <!-- Hiển thị kết quả tìm kiếm -->
+        <div class=" mt-3">
+
+            <table class="table  table-bordered">
+                <thead class="bg-light ">
+                    <tr>
+                        <th style="width:30px ">STT</th>
+                        <th>Nội dung câu hỏi</th>
+                        <th>Kiểu câu hỏi</th>
+                        <th>Điểm</th>
+                        <th style="width:110px " class="text-center">
+                            <a href="~/Quizzes/Create" class="btn btn-success " style="padding: 1px 6px; font-size: 20px">
+                                <i class="bi bi-plus-lg"></i>
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+                @for (int i = 1; i <= 4; i++)
+                {
+                    <tr>
+                        <td>@i</td>
+                        <td>
+                            <li class=" d-flex ">
+                                <div class="d-flex flex-column col-xl-10 text-start">
+                                    <p class="mb-3 text-sm">Theo học thuyết Mác – Lênin, nhận định nào sau đây là đúng:</p>
+                                    <div class="pt-3 px-3 pb-2">
+                                        <div class="d-flex" style="align-items: center;">
+                                            <p class="text-lg-start ">a. <span class=" text-xs"> Tính chất giai cấp và bản chất của nhà nước không thay đổi qua các kiểu nhà nước khác nhau.</span></p>
+
+                                        </div>
+
+                                        <div class="d-flex text-primary" style="align-items: center;">
+                                            <p class="text-lg-start ">b. <span class=" text-xs">Tính chất giai cấp và bản chất của nhà nước không thay đổi qua các kiểu nhà nước khác nhau.</span>
+                                        </div>
+
+                                        <div class="d-flex" style="align-items: center;">
+                                            <p class="text-lg-start">c. <span class="text-xs">Tính chất giai cấp và bản chất của nhà nước luôn luôn thay đổi qua các kiểu nhà nước khác nhau.</span>
+                                        </div>
+
+                                        <div class="d-flex" style="align-items: center;">
+                                            <p class="text-lg-start">d. <span class=" text-xs">Tính chất giai cấp của nhà nước luôn luôn thay đổi, còn bản chất của nhà nước là không đổi qua các kiểu nhà nước khác nhau.</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </li>
+                        </td>
+                        <td>
+                            Nhiều đáp án
+                        </td>
+                        <td>
+                            1.00
+                        </td>
+                        <td class="text-center">
+                            <a href="~/Quizzes/Edit" class="btn btn-xs btn-info">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                            <a href="~/Quizzes/Delete" class="btn btn-xs btn-danger delete-quiz">
+                                <i class="bi bi-x-circle-fill"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </table>
+
+        </div>
+
+        <nav aria-label="Page navigation example ">
+            <ul class="pagination d-flex justify-content-center pt-2">
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+
+
+
+
+        $(document).ready(function () {
+            $('.delete-quiz').on('click', function () {
+                return confirmDelete();
+            });
+
+            function confirmDelete() {
+                return window.confirm('Bạn chắc chắn muốn xoá câu hỏi này?');
+            }
+        });
+
+    </script>
+}

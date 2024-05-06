@@ -1,0 +1,189 @@
+﻿@{
+    // ViewData["Title"] = "Dashboard";
+}
+
+<div class="box box-primary  shadow-lg p-3 mb-4 rounded">
+    <div class="box-body">
+        <div class="ms-5 p-2 ps-5 mb-1 fs-4" >
+            <div class="d-flex ms-5 ">
+                <label class="me-2 ">Học phần đang tác nghiệp:</label>
+                <label class="mx-2" id="dataStudyModule"></label>
+                <button type="button" class="btn btn-light mx-2 p-1" data-bs-toggle="modal" data-bs-target="#formSelectModule">
+                    <i class="bi bi-pencil-square"></i>
+                </button>
+
+            </div>
+            
+        </div>
+       
+        <div class="d-flex justify-content-center flex-wrap">
+
+            <div class="border border-2 p-2 px-4 pointer-event mb-3  col-5 mx-3" style="color: #9932CC">
+                <div style="font-weight:bold" class="border-bottom text-center p-2 d-flex justify-content-center">
+                    <a href="~/Knowledges/Index" class="text-decoration-none fs-5" style="color: #9932CC; line-height: 40px">
+                        <img class="image-element-dashboard" src="~/img/book_3330314.png" />
+                        <span>Chức năng quản lý khối kiến thức</span>
+                    </a>
+                </div>
+                <div style="white-space: pre-line;" class="px-4">
+                    Chức năng này có thể thêm sửa xóa các khối kiến thức
+                    - Thêm khối kiến thức:
+                    B1) nhập đầy đủ các trường cần thiết
+                    B2) Click Lưu dữ liệu
+                    - Sửa thư viện câu hỏi trắc nghiệm:
+                    B1) nhập các trường cần sửa: nếu khối kiến thức đã có câu hỏi trắc nghiệm thì không được sửa
+                    B2) Click Lưu dữ liệu
+                    - Xóa thư viện câu hỏi trắc nghiệm:
+                    B1) nhập các trường cần sửa: nếu khối kiến thức đã có câu hỏi trắc nghiệm thì không được xóa
+                    B2) Xóa
+                </div>
+            </div>
+            <div class="border border-2 p-2 px-4 pointer-event mb-3 col-5 mx-3" style="color: #32CD32">
+                <div style="font-weight:bold" class="border-bottom text-center p-2 d-flex justify-content-center">
+                    <a href="~/Quizzes/Index" class="text-decoration-none fs-5" style="color: #32CD32; line-height: 40px">
+                        <img class="image-element-dashboard" src="~/img/quiz_3407037.png" />
+                        <span>Chức năng quản lý thư viện trắc nghiệm</span>
+                    </a>
+                </div>
+                <div style="white-space: pre-line;" class="px-4">
+                    Chức năng này có thể thêm sửa xóa các thư viện câu hỏi trắc nghiệm.
+                    - Xem chi tiết câu hỏi trắc nghiệm:
+                    B1) Click vào icon con mắt.
+                    - Thêm câu hỏi trắc nghiệm:
+                    B1) Nhập câu hỏi và thêm các câu trả lời
+                    B2) Chọn đáp án đúng cho câu trả lời
+                    B3) nhập trọng số điểm nếu là kiểu câu hỏi nhiều đáp án đúng
+                    B4) Click Lưu dữ liệu
+                    - Thêm câu hỏi trắc nghiệm:
+                    B1) Nhập các trường cần sửa
+                    B2) Click Lưu dữ liệu
+                    - Xóa câu hỏi trắc nghiệm:
+                    B1) Click bào biểu tượng xóa
+                    B2) Hệ thống sẽ thống báo bạn có muốn xóa câu hỏi.
+                    B3) Xóa.
+
+                </div>
+            </div>
+            <div class="border border-2 p-2 px-4 pointer-event mb-3 col-5 mx-3" style="color: #FF6347">
+                <div style="font-weight:bold" class="border-bottom text-center p-2 d-flex justify-content-center">
+                    <a href="~/TopicTemplates/Index" class="text-decoration-none fs-5" style="color: #FF6347; line-height: 40px">
+                        <img class="image-element-dashboard" src="~/img/write_2988037.png" />
+                        <span>Chức năng quản lý cấu trúc đề thi</span>
+                    </a>
+                </div>
+                <div style="white-space: pre-line;" class="px-4">
+                    Chức năng này có thể thêm sửa xóa các cấu trúc đề thi.
+                    - Thêm cấu trúc đề:
+                    B1) Nhập đầy đủ các trường cần thiết.
+                    B2) Thêm các khối kiến thức cần thiết.
+                    B3) Nhập số câu hỏi và điểm cần lấy trong khối kiến thức
+                    B4) Click Lưu dữ liệu
+                    - Tạo bộ đề thi:
+                    B1) Hiển thị chi tiết thông tin mà bộ đề thi cần có.
+                    B2) Nhập tên đề thi và số lượng bộ đề cần tạo.
+                    B3) Tạo bộ đề thi , Quay lại danh sách cấu trúc đề, Đi tới thư viện bộ đề.
+                    - Xóa cấu trúc đề thi:
+                    B1) Click bào biểu tượng xóa
+                    B2) Hệ thống sẽ thống báo bạn có muốn xóa câu hỏi.
+                    B3) Xóa.
+                </div>
+            </div>
+            <div class="border border-2 p-2 px-4 pointer-event mb-3 col-5 mx-3" style="color: #DA70D6">
+                <div style="font-weight:bold" class="border-bottom text-center p-2 d-flex justify-content-center">
+                    <a href="~/Exam/Index" class="text-decoration-none fs-5" style="color: #DA70D6; line-height: 40px">
+                        <img class="image-element-dashboard" src="~/img/folders_2821739.png" />
+                        <span>Chức năng quản lý bộ đề thi</span>
+                    </a>
+                </div>
+                <div style="white-space: pre-line;" class="px-4">
+                    Chức năng này có thể xem chi tiết bộ đề thi và câu hỏi trắc nghiệm của bộ đề và gán trạng thái cho bộ đề
+                    - Xem chi tiết bộ đề:
+                    B1) Hiển thị thông tin của bộ đề gồm: Tên đề thi, Tên cấu trúc đề, thời gian thi, số khối kiến thức trong bộ đề, số điểm và câu hỏi của từng khối kiến thức
+                    B2) Có thể quay lại danh sách bộ đề thi hoặc quay lại danh sách cấu trúc đề
+                    - Xem chi tiết câu hỏi trắc nghiệm
+                    B1) Hiển thị câu hỏi và đáp án của từng câu hỏi
+                    B2) Quay lại màn hình Quản lý bộ đề thi
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="formSelectModule" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Chọn học phần tác nghiệp</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <select id="selectStudyModule" class="form-control choices-single">
+                    <option>-- Chọn học phần --</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button id="btnSubmitStudyModule" type="button" class="btn btn-primary">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            const keyStudyModule = "studyModule";
+            const choices = new Choices($("#selectStudyModule")[0], {
+            }).setChoices(async () => {
+                try {
+                    const items = await fetch(`https://localhost:7137/Term/Index?searchValue=`);
+                    let data = (await items.json()).map(item => {
+                        const result = { 'value': item.maHocPhan, 'label': item.tenHocPhan, 'disabled': false, 'selected': false, };
+                        return result;
+                    });
+                    return data;
+                } catch (err) {
+                    console.error(err);
+                }
+            }, 'value', 'label', 'disabled', 'selected',);
+
+            choices.search = async (value, resultCount) => {
+                    console.log('Thay đổi trên select: ', await value);
+
+            }
+
+            $('#selectStudyModule').change(function (){
+                console.log('>>> value selected: ', $('#selectStudyModule').find(":selected").text());
+            });
+
+            const studyModuleTextLocal = localStorage.getItem(keyStudyModule);
+            if (studyModuleTextLocal) {
+                $('#dataStudyModule').text(studyModuleTextLocal);
+            }
+
+            $('#btnSubmitStudyModule').click(function () {
+                let studyModuleText = $('#selectStudyModule').find(":selected").text();
+                localStorage.setItem(keyStudyModule, studyModuleText);
+                $('#dataStudyModule').text(studyModuleText);
+                $('#formSelectModule').modal('hide');
+                // if (localStorage) {
+                //     document.getElementById('formSelectModule').addEventListener('#btnSubmitStudyModule', function () {
+                //         var name = document.getElementById('selectStudyModule').value;
+                //         localStorage.setItem('selectStudyModule', name);
+                //     });
+                // }
+            })
+           
+
+            window.onload = () => {
+                if (!studyModuleTextLocal) {
+                    $('#formSelectModule').modal('show');
+                }
+            }
+
+        });
+    </script>
+}

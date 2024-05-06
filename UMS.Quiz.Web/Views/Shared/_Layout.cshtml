@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] UMS.Quiz.Web</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="~/css/style.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap-5.0.2/bootstrap-5.0.2/dist/css/bootstrap-grid.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@9.0.1/public/assets/styles/choices.min.css" />
+
+    @* ckeditor *@
+    <script src="~/lib/ckeditor/ckeditor.js"> </script>
+    
+</head>
+<body class="">
+    <div class="wrapper">
+        @{
+            await Html.RenderPartialAsync("_MainHeader");
+            // await Html.RenderPartialAsync("_MainSideBar");
+        }
+
+        <!-- Content Wrapper. Contains page content -->
+        <!-- Main content -->
+        <div class="content-wrapper  ">
+            <!-- Content Header (Page header) -->
+            <section class="content-header px-3 border-bottom  border-light m-0 pt-3 ">
+                <h1 class="  fs-4 fw-normal ">
+                    @ViewBag.Title
+                </h1>
+                <section class="">
+                    @RenderBody()
+                </section>
+            </section>
+        </div>
+        
+    </div>
+    <footer class="border-top footer text-muted" style="max-height: 40px">
+        @{
+            await Html.RenderPartialAsync("_MainFooter");
+            //await Html.RenderPartialAsync("_ControlSideBar");
+        }
+    </footer>
+
+    
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/choices-9.0.1/choices.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

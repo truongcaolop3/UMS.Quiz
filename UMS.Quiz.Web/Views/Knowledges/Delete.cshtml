@@ -1,0 +1,32 @@
+﻿@{
+}
+<div class="box box-primary  shadow-lg p-3 mb-5 rounded">
+    <div class="box-body">
+        @* <h1 class="m-0 pt-3 fs-4 fw-normal border-bottom"> Xóa khối kiến thức</h1> *@
+        <form>
+            <div class="form-group py-2">
+                <label for="recipient-name" class="col-form-label fs-5">Học phần</label>
+                <!-- UX "tồi" => Nên thay bằng radio hoặc checkbox -->
+                <select class="form-control" name="category" id="categorySelect" disabled>
+                    <option>-- Tất cả học phần --</option>
+                    <option>Toán cao cấp</option>
+                    <option>Lịch sử đảng</option>
+                    <option>Toán cao cấp</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="recipient-name" class="col-form-label fs-5">Nhập tên khối kiến thức:</label>
+                <input type="text" class="form-control" id="recipient-name" disabled>
+            </div>
+            <div class="form-group py-2">
+                <button type="submit" class="btn btn-danger">
+                    <i class="fa fa-floppy-o"></i> Xóa
+                </button>
+                <a href="~/Knowledges/Index" class="btn btn-light">
+                    Quay lại
+                </a>
+            </div>
+        </form>
+
+    </div>
+</div>

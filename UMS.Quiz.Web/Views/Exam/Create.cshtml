@@ -1,0 +1,48 @@
+﻿@{
+}
+<div class="box box-primary  shadow-lg p-3 mb-5 rounded">
+    <div class="box-body">
+        @* <h1 class="m-0 pt-3 fs-4 fw-normal border-bottom"> Sửa Đề thi</h1> *@
+        <form>
+            <div class="pt-3">
+                <label for="recipient-name" class="col-form-label fs-5">Nhập tên đề thi:</label>
+                <input type="text" class="form-control" id="recipient-name">
+            </div>
+            <div class="form-group py-2">
+                <label for="recipient-name" class="col-form-label fs-5">Cấu trúc đề:</label>
+                <!-- UX "tồi" => Nên thay bằng radio hoặc checkbox -->
+                <select class="form-control" name="category" id="categorySelect">
+                    <option>-- Chọn cấu trúc đề --</option>
+                    <option>Toán cao cấp</option>
+                    <option>Lịch sử đảng</option>
+                    <option>Toán cao cấp</option>
+                </select>
+            </div>
+            <div class="form-group py-2">
+                <label for="recipient-name" class="col-form-label fs-5">Thời gian thi:</label>
+                <!-- UX "tồi" => Nên thay bằng radio hoặc checkbox -->
+                <select class="form-control" name="category" id="categorySelect">
+                    <option>-- Chọn thời gian thi --</option>
+                    <option>15</option>
+                    <option>45</option>
+                    <option>60</option>
+                    <option>90</option>
+                    <option>120</option>
+                </select>
+            </div>
+            <div class="form-group py-2 d-flex justify-content-end">
+                <a href="~/Exam/Create" class="btn btn-primary mx-2">
+                    Tạo và ở lại
+                </a>
+                <a href="~/Exam" class="btn btn-primary mx-2">
+                    Tạo và quay về trang quản lý bộ đề thi
+                </a>
+                
+                <a href="~/Exam" class="btn btn-light ms-1">
+                    Quay lại
+                </a>
+            </div>
+        </form>
+
+    </div>
+</div>

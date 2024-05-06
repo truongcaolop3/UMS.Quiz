@@ -1,4 +1,5 @@
-﻿@{
+﻿@model UMS.Quiz.Web.Models.PaginationSearchInput
+@{
     ViewBag.Title = "Quản lý thư viện trắc nghiệm";
 }
 <div class="box box-primary  shadow-lg p-3 mb-5 rounded">
@@ -6,22 +7,13 @@
         <!-- Form nhập đầu vào tìm kiếm -->
         <form id="formSearch" action="#">
            <div class="container-fluid row p-0">
-                <div class="col-sm-3">
+                <div class="col-sm-5">
                     <label for="recipient-name" class="col-form-label fs-5">Học phần:</label>
-                    <select class="form-control" id="mySelect" overflow-y: scroll; name="category" disabled>
-                        <option>Toán cao cấp</option>
-                        <option>Lịch sử đảng</option>
+                    <select class="form-control" id="mySelect" overflow-y: scroll; name="Terms" disabled>
+                        <option id="_studyModuleName" name="TermName"></option>
                     </select>
                 </div>
-                <div class="col-sm-3">
-                    <label for="recipient-name" class="col-form-label fs-5">Khối kiến thức:</label>
-                    <select class="form-control" id="mySelect" overflow-y: scroll; name="category">
-                        <option>-- Tất khối kiến thức --</option>
-                        <option>Toán cao cấp</option>
-                        <option>Lịch sử đảng</option>
-                    </select>
-                </div>
-                <div class=" col-sm-6">
+                <div class=" col-sm-7">
                     <label for="recipient-name" class="col-form-label fs-5 d-block">Tìm kiếm (khối kiến thức và học phần):</label>
                     <div class="d-flex align-items-center">
                         <input name="searchValue" type="text" class="form-control"
@@ -67,12 +59,7 @@
                                     null
                                 </td>
                                 <td class="text-center">
-                                    @* <a href="#" class="btn btn-xs btn-info">
-                                        <i class="bi bi-pencil-fill"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-xs btn-danger">
-                                        <i class="bi bi-x-circle-fill"></i>
-                                    </a> *@
+                                    
                                     <a href="~/Quizzes/QuizDetail" class="btn btn-xs btn-secondary">
                                         <i class="bi bi-eye-fill"></i>
                                     </a>

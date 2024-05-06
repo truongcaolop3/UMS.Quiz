@@ -1,8 +1,7 @@
 ﻿@{
     // ViewData["Title"] = "Dashboard";
 }
-
-<div class="box box-primary  shadow-lg p-3 mb-4 rounded">
+<div class="box box-primary  shadow-lg p-3 mb-4 rounded container-fluid">
     <div class="box-body">
         <div class="ms-5 p-2 ps-5 mb-1 fs-4" >
             <div class="d-flex ms-5 ">
@@ -11,13 +10,9 @@
                 <button type="button" class="btn btn-light mx-2 p-1" data-bs-toggle="modal" data-bs-target="#formSelectModule">
                     <i class="bi bi-pencil-square"></i>
                 </button>
-
             </div>
-            
         </div>
-       
         <div class="d-flex justify-content-center flex-wrap">
-
             <div class="border border-2 p-2 px-4 pointer-event mb-3  col-5 mx-3" style="color: #9932CC">
                 <div style="font-weight:bold" class="border-bottom text-center p-2 d-flex justify-content-center">
                     <a href="~/Knowledges/Index" class="text-decoration-none fs-5" style="color: #9932CC; line-height: 40px">
@@ -61,7 +56,6 @@
                     B1) Click bào biểu tượng xóa
                     B2) Hệ thống sẽ thống báo bạn có muốn xóa câu hỏi.
                     B3) Xóa.
-
                 </div>
             </div>
             <div class="border border-2 p-2 px-4 pointer-event mb-3 col-5 mx-3" style="color: #FF6347">
@@ -117,11 +111,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Chọn học phần tác nghiệp</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button id="btn-close" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <select id="selectStudyModule" class="form-control choices-single">
-                    <option>-- Chọn học phần --</option>
+                    @* <option>-- Chọn học phần --</option> *@
                 </select>
             </div>
             <div class="modal-footer">
@@ -135,7 +129,8 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-            const keyStudyModule = "studyModule";
+            const keyStudyModuleId = "studyModuleId";
+            const keyStudyModuleName = "studyModuleName";
             const choices = new Choices($("#selectStudyModule")[0], {
             }).setChoices(async () => {
                 try {
@@ -156,33 +151,67 @@
             }
 
             $('#selectStudyModule').change(function (){
-                console.log('>>> value selected: ', $('#selectStudyModule').find(":selected").text());
+                console.log('>>> value selected: ', $('#selectStudyModule').find(":selected").val());
+                console.log('>>> text selected: ', $('#selectStudyModule').find(":selected").text());
             });
 
-            const studyModuleTextLocal = localStorage.getItem(keyStudyModule);
+            const studyModuleTextLocal = localStorage.getItem(keyStudyModuleName);
+
             if (studyModuleTextLocal) {
+                $('#btn-close').show();
                 $('#dataStudyModule').text(studyModuleTextLocal);
+            } else {
+                $('#formSelectModule').modal('show');
+                $('#btn-close').hide();
             }
 
             $('#btnSubmitStudyModule').click(function () {
+                let studyModuleValue = $('#selectStudyModule').find(":selected").val();
                 let studyModuleText = $('#selectStudyModule').find(":selected").text();
-                localStorage.setItem(keyStudyModule, studyModuleText);
+
+                if (!studyModuleValue && !studyModuleText) {
+                    alert('Vui lòng chọn học phần tác nghiệp!');
+                    $('#formSelectModule').modal('show');
+                    return;
+                }
+
+                localStorage.setItem(keyStudyModuleId, studyModuleValue);
+                localStorage.setItem(keyStudyModuleName, studyModuleText);
                 $('#dataStudyModule').text(studyModuleText);
                 $('#formSelectModule').modal('hide');
+                $('#btn-close').show();
                 // if (localStorage) {
                 //     document.getElementById('formSelectModule').addEventListener('#btnSubmitStudyModule', function () {
                 //         var name = document.getElementById('selectStudyModule').value;
                 //         localStorage.setItem('selectStudyModule', name);
                 //     });
                 // }
-            })
-           
 
-            window.onload = () => {
-                if (!studyModuleTextLocal) {
-                    $('#formSelectModule').modal('show');
-                }
-            }
+                console.log('==> studyModuleValue: ', studyModuleValue);
+
+                // gọi ajax
+                $.ajax({
+                    url: "/Account/UpdateTerm",
+                    method: "POST",
+                    data: {
+                        chooseTermId: studyModuleValue,
+                    },
+                    success: function(data) {
+                        console.log('==> data: ', data);
+                        alert('Chọn học phần tác nghiệp thành công!');
+                    },
+                    error: function(err) {
+                        console.log('==> error: ', err);
+                        alert('Chọn học phần tác nghiệp thất bại!');
+                    }
+                });
+            })
+
+            // window.onload = () => {
+            //     if (!studyModuleTextLocal) {
+            //         $('#formSelectModule').modal('show');
+            //     }
+            // }
 
         });
     </script>

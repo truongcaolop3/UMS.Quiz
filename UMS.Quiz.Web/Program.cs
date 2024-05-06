@@ -5,14 +5,14 @@ using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//
-//builder.Services.AddSession(options =>
-//{
-//    options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian timeout cho Session
-//});
 
-//builder.Services.AddHttpContextAccessor();
-//
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian timeout cho Session
+});
+
+builder.Services.AddHttpContextAccessor();
+
 
 
 // thêm cấu hình cho phép xác thực bằng cookie.
@@ -26,6 +26,12 @@ builder.Services.AddDbContext<ApplicationDBContext>(options => options.UseSqlSer
     builder.Configuration.GetConnectionString("defaultConnection")
     ));
 
+builder.Services.AddSession(option =>
+{
+    option.IdleTimeout = TimeSpan.FromMinutes(60);
+    option.Cookie.HttpOnly = true;
+    option.Cookie.IsEssential = true;
+});
 var app = builder.Build();
 
 
@@ -36,7 +42,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 
-    //app.UseDeveloperExceptionPage();
+    app.UseDeveloperExceptionPage();
 }
 
 //app.UseSession();
@@ -50,4 +56,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
+
+UMS.Quiz.BusinessLayers.Configuration.Initialize(builder.Configuration.GetConnectionString("defaultConnection"));
+
 app.Run();

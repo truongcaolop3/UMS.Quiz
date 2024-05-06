@@ -11,21 +11,74 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Hosting;
 using System.Reflection.Metadata;
 using System.Security.Claims;
+using UMS.Quiz.BusinessLayers;
+using UMS.Quiz.DomainModels;
+using UMS.Quiz.DataLayers.SQLServer;
+using UMS.Quiz.Web.Models.Accounts;
 
 namespace UMS.Quiz.Web.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
-
-        public IActionResult Index()
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult Login()
         {
+            // Khi đã đăng nhập trước đó thì chuyển về trang chủ
+            var accountId = HttpContext.User.Claims.FirstOrDefault();
+            if (accountId != null)
+            {
+                return RedirectToAction(actionName: "Index", controllerName: "Home");
+            }
+
             return View();
         }
 
         [AllowAnonymous]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel viewData)
+        {
+            // kiểm tra dữ liệu đầu vào
+            if (!ModelState.IsValid)
+            {
+                return View(viewData);
+            }
+
+            // xử lý đăng nhập
+            var account = AccountService.Authorize(viewData.UserName!, viewData.Password!, viewData.Role!);
+
+            if (account == null)
+            {
+                TempData["ErrorLogin"] = "Tài khoản hoặc mật khẩu không chính xác";
+                return View(viewData);
+            }
+
+            // Lưu tolen vào trong cookie authentication
+            var claims = new List<Claim>
+                {
+                    new Claim("AccountId", account.AccountId.ToString()),
+                    new Claim(nameof(account.ID), account.ID!),
+                    new Claim(ClaimTypes.Role, account.Role!),
+                };
+
+            var claimsIdentity = new ClaimsIdentity(
+                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity)
+            );
+
+
+            // Chuyển hướng người dùng đến trang 'Index' của controller 'Home'
+            return RedirectToAction(actionName: "Index", controllerName: "Home");
+        }
+
+        [AllowAnonymous]
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult LoginUms()
         {
             var appId = $"app_id={UmsApiConstant.UMS_APP}";
             var redirectUrl = $"redirect_uri={UmsApiConstant.REDIRECT_URL}";
@@ -105,11 +158,11 @@ namespace UMS.Quiz.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> LogoutAsync()
+        public async Task<IActionResult> Logout()
         {
             // Xóa token khỏi Session
             //_httpContextAccessor.HttpContext!.Session.Remove("UMS_TOKEN");
-            UmsApiConstant.UMS_TOKEN = null;
+            // UmsApiConstant.UMS_TOKEN = null;
 
             // Xoá sạch cookie authentication
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -122,5 +175,62 @@ namespace UMS.Quiz.Web.Controllers
             // Chuyển hướng người dùng đến trang đăng nhập hoặc trang chính
             return RedirectToAction("Login", "Account"); // Điều hướng đến trang đăng nhập
         }
+        public static bool UpdateAccountWithTerm(int accountId, string chooseTermId)
+        {
+            try
+            {
+                // Tìm kiếm tài khoản trong cơ sở dữ liệu
+                var account = CommonDataService.GetAccount(accountId);
+                if (account == null)
+                {
+                    // Trả về false nếu không tìm thấy tài khoản
+                    return false;
+                }
+
+                // Cập nhật học phần cho tài khoản
+                account.TermId = chooseTermId;
+
+                // Lưu thay đổi vào cơ sở dữ liệu
+                CommonDataService.UpdateAccount(account);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi nếu có
+                Console.WriteLine($"Lỗi khi cập nhật học phần cho tài khoản: {ex.Message}");
+                return false;
+            }
+        }
+
+        [HttpPost]
+        public IActionResult UpdateTerm(string chooseTermId)
+        {
+            var accountId = HttpContext.User.Claims.FirstOrDefault();
+            if (accountId != null)
+            {
+                Console.WriteLine($"===> ACCOUNT ID IN HOME: {accountId.Value}");
+            }
+
+            Console.WriteLine($"===> chooseTermId: {chooseTermId}");
+
+            // Gọi hàm cập nhật học phần cho tài khoản
+            var result = UpdateAccountWithTerm(int.Parse(accountId!.Value), chooseTermId);
+
+            //if (result)
+            //{
+            //    //// Nếu cập nhật thành công, chuyển hướng hoặc trả về thông báo thành công
+            //    //return RedirectToAction("Index", "Home"); // Ví dụ chuyển hướng đến trang chính sau khi cập nhật
+            //    return Json(result);
+            //}
+            //else
+            //{
+            //    // Nếu có lỗi, hiển thị thông báo lỗi
+            //    ModelState.AddModelError(string.Empty, "Cập nhật học phần không thành công.");
+            //    return View(chooseTermId); // Hiển thị lại view với dữ liệu đã nhập
+            //}
+            return Json(result);
+        }
+
     }
 }

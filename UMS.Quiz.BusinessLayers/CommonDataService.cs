@@ -24,6 +24,7 @@ namespace UMS.Quiz.BusinessLayers
         private static readonly ICommonDAL<QuestionDetail> QuestionDetailDB;
         private static readonly ICommonDAL<QuizQuestionAnswer> QuizQuestionAnswerDB;
         private static readonly ICommonDAL<TopicTemplate> TopicTemplateDB;
+        private static readonly ICommonDAL<Account> AccountDB;
 
         /// <summary>
         /// Ctor
@@ -37,6 +38,7 @@ namespace UMS.Quiz.BusinessLayers
             QuestionDetailDB = new QuestionDetailDAL(connectionString);
             QuizQuestionAnswerDB = new QuizQuestionAnswerDAL(connectionString);
             TopicTemplateDB = new TopicTemplateDAL(connectionString);
+            AccountDB = new AccountDAL(connectionString);
         }
         /// <summary>
         /// Tìm kiếm và lấy danh sách khối kiến thức
@@ -46,10 +48,10 @@ namespace UMS.Quiz.BusinessLayers
         /// <param name="pageSize"></param>
         /// <param name="searchValue"></param>
         /// <returns></returns>
-        public static List<Knowledges> ListOfKnowledges(out int rowCount , int page = 1, int pageSize = 0, string searchValue = "")
+        public static List<Knowledges> ListOfKnowledges(out int rowCount , int page = 1, int pageSize = 0, string searchValue = "", string termID = "")
         {
-            rowCount = KnowledgesDB.Count(searchValue);
-            return KnowledgesDB.List(page, pageSize, searchValue).ToList();
+            rowCount = KnowledgesDB.Count(searchValue, termID);
+            return KnowledgesDB.List(page, pageSize, searchValue, termID).ToList();
         }
         /// <summary>
         /// Lấy thông tin của một khối kiến thức theo mã học phần
@@ -85,9 +87,7 @@ namespace UMS.Quiz.BusinessLayers
         /// <returns></returns>
         public static bool DeleteKnowledges(int id)
         {
-            if (KnowledgesDB.IsUsed(id))
-                return false;
-            return KnowledgesDB.Delete(id);
+            return KnowledgesDB.IsUsed(id) && KnowledgesDB.Delete(id);
         }
         /// <summary>
         /// Kiểm tra xem khối kiến thức có mã id hiện có dữ liệu liên quan hay không?
@@ -107,10 +107,10 @@ namespace UMS.Quiz.BusinessLayers
         /// <param name="pageSize"></param>
         /// <param name="searchValue"></param>
         /// <returns></returns>
-        public static List<QuizQuestion> ListOfQuizQuestion(out int rowCount, int page = 1, int pageSize = 0, string searchValue = "")
+        public static List<QuizQuestion> ListOfQuizQuestion(out int rowCount, int page = 1, int pageSize = 0, string searchValue = "", string termID = "")
         {
-            rowCount = QuizQuestionDB.Count(searchValue);
-            return QuizQuestionDB.List(page, pageSize, searchValue).ToList();
+            rowCount = QuizQuestionDB.Count(searchValue, termID);
+            return QuizQuestionDB.List(page, pageSize, searchValue, termID).ToList();
         }
         /// <summary>
         /// Lấy thông tin của một khối kiến thức theo mã học phần
@@ -146,9 +146,10 @@ namespace UMS.Quiz.BusinessLayers
         /// <returns></returns>
         public static bool DeleteQuizQuestion(int id)
         {
-            if (QuizQuestionDB.IsUsed(id))
-                return false;
-            return QuizQuestionDB.Delete(id);
+            //if (QuizQuestionDB.IsUsed(id))
+            //    return false;
+            //return QuizQuestionDB.Delete(id);
+            return QuizQuestionDB.IsUsed(id) && QuizQuestionDB.Delete(id);
         }
         /// <summary>
         /// Kiểm tra xem khối kiến thức có mã id hiện có dữ liệu liên quan hay không?
@@ -341,6 +342,25 @@ namespace UMS.Quiz.BusinessLayers
         public static bool IsUsedTopicTemplate(int id)
         {
             return TopicTemplateDB.IsUsed(id);
+        }
+
+        /// <summary>
+        /// Lấy thông tin của một khối kiến thức theo mã học phần
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static Account? GetAccount(int id)
+        {
+            return AccountDB.Get(id);
+        }
+        /// <summary>
+        /// Cập nhật khối kiến thức
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static bool UpdateAccount(Account data)
+        {
+            return AccountDB.Update(data);
         }
     }
 

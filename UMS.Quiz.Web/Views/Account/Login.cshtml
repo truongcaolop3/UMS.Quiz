@@ -1,0 +1,103 @@
+﻿@model UMS.Quiz.Web.Models.Accounts.LoginViewModel
+@{
+    Layout = null;
+    bool isChecked = Model!=null 
+        && !string.IsNullOrWhiteSpace(Model!.Role) 
+        && Model.Role == "Teacher";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Đăng nhập</title>
+    <link href="https://ums-dev.husc.edu.vn/ApiGateway/content/auth/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://ums-dev.husc.edu.vn/ApiGateway/content/auth/bootstrap-customize.css" rel="stylesheet" />
+    <link href="https://ums-dev.husc.edu.vn/ApiGateway/content/auth/style.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="hitec-signin">
+        <div class="hitec-col-image col-sm-8 text-center">
+            <div class="hitec-signin-logo">
+                <img src="https://ums-dev.husc.edu.vn/ApiGateway/content/auth/images/Logo-ko-nen.png" alt="">
+            </div>
+            <div class="hitec-signin-image">
+                <img src="https://ums-dev.husc.edu.vn/ApiGateway/content/auth/images/image1.png" alt="">
+            </div>
+        </div>
+
+        <div class="hitec-col-signin col-sm-4">
+            <form class="hitec-form-signin" action="~/Account/Login" method="post">
+                @Html.AntiForgeryToken()
+
+                <p class="form-signin-heading">ĐĂNG NHẬP</p>
+                <p class="form-signin-appname">Phần mềm Thử nghiệm</p>
+
+                <div class="form-group">
+                    <label>Tên đăng nhập:</label>
+                    <input type="text" id="username" name="username"
+                           class="form-control input-lg"
+                           placeholder="T&#234;n đăng nhập" required autofocus />
+                           @* value="@Model!.UserName" /> *@
+
+                    @Html.ValidationMessage(nameof(Model.UserName), new { @style = "color:#f00" })
+                </div>
+
+                <div class="form-group">
+                    <label>Mật khẩu:</label>
+                    <input type="password" id="password" name="password"
+                           class="form-control input-lg"
+                           placeholder="Mật khẩu" required />
+                           @* value="@Model!.Password" /> *@
+                    @Html.ValidationMessage(nameof(Model.Password), new { @style = "color:#f00" })
+                </div>
+
+                <div class="form-group">
+                    <div style="display:grid;grid-template-columns:50% auto">
+                        <label>
+                            <input type="radio" name="role"
+                                   value="Teacher"
+                            @(isChecked ? "checked": "") />
+                            Tài khoản Giảng viên
+                        </label>
+                        <label>
+                            <input type="radio" name="role"
+                                   value="Student" @(isChecked ? "checked" : "") />
+                            Tài khoản Sinh viên
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-lg btn-primary btn-block btn-custom" type="submit">Đăng nhập</button>
+                </div>
+
+                <div class="form-group">
+                    @if (TempData.ContainsKey("ErrorLogin"))
+                    {
+                        <span class="text-danger">
+                            <span class="field-validation-valid" data-valmsg-for="Error" data-valmsg-replace="true">
+                                @TempData["ErrorLogin"]!.ToString()
+                            </span>
+                        </span>
+                    }
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <footer>
+        <div class="row">
+            <div class="col-xs-12 text-center nopadding">
+                <p>&copy; Trường Đại học Khoa học – Đại học Huế</p>
+                <p>Địa chỉ: 77 Nguyễn Huệ – Thành phố Huế</p>
+                <p>Điện thoại: 0234.3823290 – Fax: 0234.3824901</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
+

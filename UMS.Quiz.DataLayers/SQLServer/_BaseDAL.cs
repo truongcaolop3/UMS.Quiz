@@ -31,5 +31,6 @@ namespace UMS.Quiz.DataLayers.SQLServer
             connection.Open();
             return connection;
         }
+
     }
 }

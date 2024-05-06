@@ -16,12 +16,32 @@ namespace UMS.Quiz.DataLayers
         /// <param name="searchValue">Giá trị tìm kiếm (chuỗi rỗng nếu lấy toàn bộ dữ liệu)</param>
         /// <returns></returns>
         IList<T> List(int page = 1, int pageSize = 0, string searchValue = "");
+
+        /// <summary>
+        /// Tìm kiếm và lấy danh sách dữ liệu dưới dạng phân trang theo học phần tác nghiệp
+        /// </summary>
+        /// <param name="page">Trang cần hiển thị</param>
+        /// <param name="pageSize">Số dòng trên mỗi trang (bằng 0 nếu không phân trang)</param>
+        /// <param name="searchValue">Giá trị tìm kiếm (chuỗi rỗng nếu lấy toàn bộ dữ liệu)</param>
+        /// <param name="termId">Học phần tác nghiệp</param>
+        /// <returns></returns>
+        IList<T> List(int page = 1, int pageSize = 0, string searchValue = "", string termId = "");
+
         /// <summary>
         /// Đếm số lượng dòng dữ liệu tìm được
         /// </summary>
         /// <param name="searchValue">Giá trị tìm kiếm (chuỗi rỗng nếu lấy toàn bộ dữ liệu)</param>
         /// <returns></returns>
         int Count(string searchValue = "");
+
+        /// <summary>
+        /// Đếm số lượng dòng dữ liệu tìm được
+        /// </summary>
+        /// <param name="searchValue">Giá trị tìm kiếm (chuỗi rỗng nếu lấy toàn bộ dữ liệu)</param>
+        /// <param name="termId">Học phần tác nghiệp</param>
+        /// <returns></returns>
+        int Count(string searchValue = "", string termID = "");
+
         /// <summary>
         /// Lấy một bản ghi/dòng dữ liệu dựa trên mã (id)
         /// </summary>

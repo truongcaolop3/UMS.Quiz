@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@9.0.1/public/assets/styles/choices.min.css" />
-
+    @RenderSection("style", required: false)
     @* ckeditor *@
     <script src="~/lib/ckeditor/ckeditor.js"> </script>
     
@@ -52,5 +52,26 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/choices-9.0.1/choices.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script type="text/javascript">
+        $(document).ready(function () {
+            const studyModuleId = localStorage.getItem('studyModuleId');
+            const studyModuleName = localStorage.getItem('studyModuleName');
+
+            // kiểm tra nếu không có mã hoặc tên học phần trong local và không phải ở trang chủ
+            console.log("==> url: ", location.href);
+            if ((!studyModuleId || !studyModuleName) 
+                && (!location.href.includes("Home"))
+                && (!location.href.includes("Student"))
+               ) {
+                location.href = "/";
+                return;
+            }
+
+            $("#_studyModuleId").text(studyModuleId);
+            $("#_studyModuleId").val(studyModuleId);
+            $("#_studyModuleName").text(studyModuleName);
+            $("#_studyModuleName").val(studyModuleName);
+        });
+    </script>
 </body>
 </html>

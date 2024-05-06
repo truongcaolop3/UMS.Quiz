@@ -55,6 +55,11 @@ namespace UMS.Quiz.DataLayers.SQLServer
             return count;
         }
 
+        public int Count(string searchValue = "", string termID = "")
+        {
+            throw new NotImplementedException();
+        }
+
         public bool Delete(int id)
         {
             bool result = false;
@@ -149,6 +154,11 @@ namespace UMS.Quiz.DataLayers.SQLServer
                 connection.Close();
             }
             return data;
+        }
+
+        public IList<ExamDetailAnswer> List(int page = 1, int pageSize = 0, string searchValue = "", string termId = "")
+        {
+            throw new NotImplementedException();
         }
 
         public bool Update(ExamDetailAnswer data)

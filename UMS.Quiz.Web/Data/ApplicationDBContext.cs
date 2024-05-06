@@ -127,6 +127,12 @@ namespace UMS.Quiz.Web.Data
                 .WithMany(t => t.examDetailAnswers)
                 .HasForeignKey(t => t.ExamDetailCandidatesID);
         }
+
+        internal static T GetSessionData<T>(object cUSTOMER_SEARCH)
+        {
+            throw new NotImplementedException();
+        }
+
         public DbSet<Terms> Terms { get; set; }
         public DbSet<Knowledges> Knowledges { get; set; }
         public DbSet<QuizQuestion> QuizQuestions { get; set; }

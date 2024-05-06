@@ -42,10 +42,32 @@ namespace UMS.Quiz.DataLayers.SQLServer
             using (var connection = OpenConnection())
             {
                 var sql = @"select count(*) from QuizQuestion 
-                            where (@searchValue = N'') or (KnowledgeName like @searchValue)";
+                            where (@searchValue = N'') or (KnowledgedId like @searchValue)";
                 var parameters = new
                 {
                     searchValue = searchValue ?? "",
+                };
+                count = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
+                connection.Close();
+            }
+            return count;
+        }
+
+        public int Count(string searchValue = "", string termID = "")
+        {
+            int count = 0;
+            if (!string.IsNullOrEmpty(searchValue))
+                searchValue = "%" + searchValue + "%";
+            using (var connection = OpenConnection())
+            {
+                //as q
+                //Join Knowledges as k ON q.KnowledgeId = k.KnowledgeId
+                var sql = @"select count(*) from QuizQuestions 
+                            where ((@searchValue = N'') or (KnowledgedId like @searchValue)) and TermID = @TermId ";
+                var parameters = new
+                {
+                    searchValue = searchValue ?? "",
+                    TermId = termID
                 };
                 count = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
                 connection.Close();
@@ -74,7 +96,9 @@ namespace UMS.Quiz.DataLayers.SQLServer
             QuizQuestion? data = null;
             using (var connection = OpenConnection())
             {
-                var sql = @"select * from QuizQuestion where QuizQuestionId = @QuizQuestionId";
+                var sql = @"select * from QuizQuestion as q
+                                    Join knowledges as k ON k.knowledgeId = q.KnowledgeId
+                                    where QuizQuestionId = @QuizQuestionId";
                 var parameters = new { QuizQuestionId = id };
                 data = connection.QueryFirstOrDefault<QuizQuestion>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
                 connection.Close();
@@ -84,37 +108,18 @@ namespace UMS.Quiz.DataLayers.SQLServer
 
         public bool IsUsed(int id)
         {
-            bool result = false;
-            //using (var connection = OpenConnection())
-            //{
-            //    var sql = @"if exists(select * from Knowledges where KnowledgeId = @KnowledgeId)
-            //                    select 1
-            //                else 
-            //                    select 0";
-            //    var parameters = new { KnowledgeId = id };
-            //    result = connection.executescalar<bool>(sql: sql, param: parameters, commandtype: system.data.commandtype.text);
-            //    connection.close();
-            //}
-
+            //bool result = false;
             using (var connection = OpenConnection())
             {
-                var sql = @"IF EXISTS (SELECT * FROM QuizQuestion WHERE QuizQuestionId = @QuizQuestionId)
-                    SELECT 1
-                ELSE
-                    SELECT 0";
+                var sql = @"if exists(select * from QuizQuestion where QuizQuestionId = @QuizQuestionId)
+                                select 1
+                            else 
+                                select 0";
+                var parameters = new { KnowledgeId = id };
+                var result = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
 
-                var parameters = new { QuizQuestionId = id };
-
-                using (var command = new SqlCommand(sql, connection))
-                {
-                    command.Parameters.AddWithValue("@QuizQuestionId", id);
-                    result = (int)command.ExecuteScalar() == 1;
-                }
-
-                connection.Close();
+                return result > 0;
             }
-
-            return result;
         }
 
         public IList<QuizQuestion> List(int page = 1, int pageSize = 0, string searchValue = "")
@@ -139,6 +144,36 @@ namespace UMS.Quiz.DataLayers.SQLServer
                     page = page,
                     pageSize = pageSize,
                     searchValue = searchValue ?? ""
+                };
+                data = connection.Query<QuizQuestion>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text).ToList();
+                connection.Close();
+            }
+            return data;
+        }
+
+        public IList<QuizQuestion> List(int page = 1, int pageSize = 0, string searchValue = "", string termId = "")
+        {
+            List<QuizQuestion> data = new List<QuizQuestion>();
+            if (!string.IsNullOrEmpty(searchValue))
+                searchValue = "%" + searchValue + "%";
+            using (var connection = OpenConnection())
+            {
+                var sql = @";with cte as
+                            (
+                                select	*, row_number() over (order by KnowledgeName) as RowNumber
+                                from	Knowledges
+                                where	((@searchValue = N'') or (KnowledgeName like @searchValue)) and TermID = @TermId
+                            )
+                            select * from cte
+                            where  (@pageSize = 0)
+                                or (RowNumber between (@page - 1) * @pageSize + 1 and @page * @pageSize)
+                            order by RowNumber";
+                var parameters = new
+                {
+                    page = page,
+                    pageSize = pageSize,
+                    searchValue = searchValue ?? "",
+                    TermID = termId,
                 };
                 data = connection.Query<QuizQuestion>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text).ToList();
                 connection.Close();

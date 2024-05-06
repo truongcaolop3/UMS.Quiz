@@ -37,7 +37,6 @@ namespace UMS.Quiz.Web.Controllers
                     {
                         // Đọc nội dung phản hồi dưới dạng chuỗi.
                         var responseString = await response.Content.ReadAsStringAsync();
-
                         // Giải mã chuỗi JSON thành đối tượng cụ thể.
                         studyModuleValue = JsonConvert.DeserializeObject<BaseApiUmsResponse<BaseApiUmsPaginateResponse<ApiUmsStudyModuleResponse>>>(responseString)!.Data!.Value!;
                     }

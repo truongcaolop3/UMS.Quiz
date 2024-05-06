@@ -28,6 +28,7 @@ namespace UMS.Quiz.Web.Models
     public class KnowledgesSearchResult : BasePaginationResult
     {
         public List<Knowledges> Data { get; set; } = new List<Knowledges>();
+        public string? TermID { get; set; }
     }
     /// <summary>
     /// 
@@ -35,6 +36,7 @@ namespace UMS.Quiz.Web.Models
     public class QuizQuestionSearchResult : BasePaginationResult
     {
         public List<QuizQuestion> Data { get; set; } = new List<QuizQuestion>();
+        public string? TermID { get; set; }
     }
     /// <summary>
     /// 
@@ -55,11 +57,7 @@ namespace UMS.Quiz.Web.Models
     {
         public List<ExamQuestions> Data { get; set; } = new List<ExamQuestions>();
     }
-    public class ExamDetailAnswerSearchResult : BasePaginationResult
-    {
-        public List<ExamDetailAnswer> Data { get; set; } = new List<ExamDetailAnswer>();
-    }
-
+  
     public class ExamSearchResult : BasePaginationResult
     {
         public List<Exam> Data { get; set; } = new List<Exam>();
@@ -68,8 +66,9 @@ namespace UMS.Quiz.Web.Models
     {
         public List<ExamDetailCandidates> Data { get; set; } = new List<ExamDetailCandidates>();
     }
-    public class ExamDetailAnswerAnswerSearchResult : BasePaginationResult
+    public class ExamDetailAnswerSearchResult : BasePaginationResult
     {
         public List<ExamDetailAnswer> Data { get; set; } = new List<ExamDetailAnswer>();
     }
+
 }

@@ -286,4 +286,8 @@
     <ProjectReference Include="..\UMS.Quiz.DomainModels\UMS.Quiz.DomainModels.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Knowledges\" />
+  </ItemGroup>
+
 </Project>

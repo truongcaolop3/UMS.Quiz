@@ -14,7 +14,7 @@
         /// <param name="connectionString"></param>
         public static void Initialize(string connectionString)
         {
-            Configuration.ConnectionString = connectionString;
+            ConnectionString = connectionString;
         }
     }
 }

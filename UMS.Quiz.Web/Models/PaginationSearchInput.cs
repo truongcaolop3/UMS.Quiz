@@ -1,4 +1,6 @@
-﻿namespace UMS.Quiz.Web.Models
+﻿using UMS.Quiz.Web.Constants;
+
+namespace UMS.Quiz.Web.Models
 {
     /// <summary>
     /// Đầu vào tìm kiếm dữ liệu để nhận dữ liệu dưới dạng phân trang
@@ -9,5 +11,13 @@
         public int PageSize { get; set; } = 0;
         public string SearchValue { get; set; } = "";
         public string TermID { get; set; } = "";
+        public int accountId { get; set; }
+        //public string KnowledgeName { get; set; } = "";
+    }
+
+    public class QuestionDetailInput : PaginationSearchInput
+    {
+        public int QuestionType { get; set; } = QuestionTypeConstant.DEFAULT;
+        public int KnowledgeId { get; set; }
     }
 }

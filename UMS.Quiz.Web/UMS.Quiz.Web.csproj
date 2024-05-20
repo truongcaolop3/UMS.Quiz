@@ -272,6 +272,7 @@
     <PackageReference Include="BootstrapIcons.AspNetCore" Version="1.11.0" />
     <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.27" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.27" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.27">
       <PrivateAssets>all</PrivateAssets>
@@ -284,10 +285,6 @@
     <ProjectReference Include="..\UMS.Quiz.BusinessLayers\UMS.Quiz.BusinessLayers.csproj" />
     <ProjectReference Include="..\UMS.Quiz.DataLayers\UMS.Quiz.DataLayers.csproj" />
     <ProjectReference Include="..\UMS.Quiz.DomainModels\UMS.Quiz.DomainModels.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\Knowledges\" />
   </ItemGroup>
 
 </Project>

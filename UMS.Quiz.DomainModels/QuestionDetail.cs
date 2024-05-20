@@ -21,7 +21,7 @@ namespace UMS.Quiz.DomainModels
         /// <summary>
         /// Loại câu hỏi
         /// </summary>
-        public string? QuestionType { get; set; }
+        public int QuestionType { get; set; }
         /// <summary>
         /// Câu hỏi
         /// </summary>
@@ -33,18 +33,27 @@ namespace UMS.Quiz.DomainModels
         /// <summary>
         /// 
         /// </summary>
-        public int QuizQuestionId { get; set; }
+        //public int QuizQuestionId { get; set; }
         /// <summary>
         /// thuộc thư viện câu hỏi nào 
         /// </summary>
-        public QuizQuestion? QuizQuestion { get; set; }
+        //public QuizQuestion? QuizQuestion { get; set; }
+        //public ICollection<QuizQuestion> quizQuestions { get; set; } = new List<QuizQuestion>();
+        //public int? QuizQuestionId { get; set; }
+        //public QuizQuestion? quizQuestion { get; set; }
+        public int? KnowledgeId { get; set; }
+        public Knowledges? knowledges { get; set; }
+
         public ICollection<QuizQuestionAnswer> QuizQuestionAnswers { get; set; } = new List<QuizQuestionAnswer>();
         /// <summary>
         /// Id cấu trúc đề
         /// </summary>
-        public int TopicTemplateID { get; set; }
+        public int? TopicTemplateID { get; set; }
         public TopicTemplate? TopicTemplate { get; set; }
 
-
+        /// <summary>
+        /// thuộc người dùng nào 
+        /// </summary>
+        public int AccountId { get; set; }
     }
 }

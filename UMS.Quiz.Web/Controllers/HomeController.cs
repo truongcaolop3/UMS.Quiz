@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using UMS.Quiz.BusinessLayers;
 using UMS.Quiz.Web.Models;
 
 namespace UMS.Quiz.Web.Controllers
@@ -23,6 +24,26 @@ namespace UMS.Quiz.Web.Controllers
                 Console.WriteLine($"===> UMS TOKEN IN HOME: {token.Value}");
             }
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult GetCurrentTerm()
+        {
+            var accountId = HttpContext.User.Claims.FirstOrDefault();
+            var accountDb = CommonDataService.GetAccount(int.Parse(accountId!.Value));
+            if (accountDb == null)
+            {
+                return Json(null);
+            }
+
+            var termDb = CommonDataService.GetTerm(accountDb.TermId!);
+
+            if (termDb == null)
+            {
+                return Json(null);
+            }
+
+            return Json(termDb);
         }
 
         public IActionResult Privacy()

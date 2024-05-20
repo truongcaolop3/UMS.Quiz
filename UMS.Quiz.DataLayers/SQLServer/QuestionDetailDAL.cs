@@ -9,7 +9,7 @@ using UMS.Quiz.DomainModels;
 
 namespace UMS.Quiz.DataLayers.SQLServer
 {
-    public class QuestionDetailDAL: _BaseDAL, ICommonDAL<QuestionDetail>
+    public class QuestionDetailDAL: _BaseDAL, IQuestionDetailDAL
     {
         public QuestionDetailDAL(string connectionString) : base(connectionString)
         {
@@ -53,9 +53,56 @@ namespace UMS.Quiz.DataLayers.SQLServer
             return count;
         }
 
-        public int Count(string searchValue = "", string termID = "")
+        public int Count(string searchValue = "", string termID = "", int AccountId = 0)
         {
-            throw new NotImplementedException();
+            int count = 0;
+            if (!string.IsNullOrEmpty(searchValue))
+                searchValue = "%" + searchValue + "%";
+            using (var connection = OpenConnection())
+            {
+                var sql = @"SELECT	COUNT(*)
+	                        FROM QuestionDetail qd
+	                        INNER JOIN Knowledges k ON qd.KnowledgeId = k.KnowledgeId
+	                        INNER JOIN Terms t ON t.TermID = k.TermID
+	                        WHERE ((@SearchValue = N'') OR (qd.QuestionText LIKE @SearchValue))
+		                        AND (@QuestionType = 0 OR qd.QuestionType = @QuestionType)
+		                        AND (@KnowledgeId = 0 OR k.KnowledgeId = @KnowledgeId)
+		                        AND (@AccountId = N'' or qd.AccountId = @AccountId)";
+                var parameters = new
+                {
+                    searchValue = searchValue ?? "",
+                };
+                count = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
+                connection.Close();
+            }
+            return count;
+        }
+
+        public int Count(string searchValue = "", int questionType = 0, int knowledgeId = 0, int AccountId = 0)
+        {
+            if (!string.IsNullOrEmpty(searchValue))
+                searchValue = "%" + searchValue + "%";
+            using (var connection = OpenConnection())
+            {
+                var sql = @"SELECT	COUNT(*)
+	                        FROM QuestionDetail qd
+	                        INNER JOIN Knowledges k ON qd.KnowledgeId = k.KnowledgeId
+	                        INNER JOIN Terms t ON t.TermID = k.TermID
+	                        WHERE ((@SearchValue = N'') OR (qd.QuestionText LIKE @SearchValue))
+		                        AND (@QuestionType = 0 OR qd.QuestionType = @QuestionType)
+		                        AND (@KnowledgeId = 0 OR k.KnowledgeId = @KnowledgeId)
+		                        AND (@AccountId = 0 or qd.AccountId = @AccountId)";
+                var parameters = new
+                {
+                    SearchValue = searchValue ?? "",
+                    QuestionType = questionType,
+                    KnowledgeId = knowledgeId,
+                    AccountId = AccountId
+                };
+
+                var count = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
+                return count;
+            }
         }
 
         public bool Delete(int id)
@@ -79,12 +126,18 @@ namespace UMS.Quiz.DataLayers.SQLServer
             QuestionDetail? data = null;
             using (var connection = OpenConnection())
             {
-                var sql = @"select from QuestionDetail where QuestionDetailID = @QuestionDetailID";
-                var parameters = new { QuestionDetailID = id };
+                var sql = @"select * from QuestionDetail 
+                                where QuestionDetailID = @QuestionDetailID";
+                var parameters = new { QuestionDetailID = id, };
                 data = connection.QueryFirstOrDefault<QuestionDetail>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
                 connection.Close();
             }
             return data;
+        }
+
+        public QuestionDetail? Get(string id)
+        {
+            throw new NotImplementedException();
         }
 
         public bool IsUsed(int id)
@@ -129,7 +182,7 @@ namespace UMS.Quiz.DataLayers.SQLServer
                 searchValue = "%" + searchValue + "%";
             using (var connection = OpenConnection())
             {
-                var sql = @"with cte as
+                var sql = @";with cte as
                             (
                              select	*, row_number() over (order by QuestionText) as RowNumber
                              from	QuestionDetail 
@@ -151,9 +204,105 @@ namespace UMS.Quiz.DataLayers.SQLServer
             return data;
         }
 
-        public IList<QuestionDetail> List(int page = 1, int pageSize = 0, string searchValue = "", string termId = "")
+       
+        public IList<QuestionDetail> List(int page = 1, int pageSize = 0, string searchValue = "", string termId = "", int AccountId = 0)
         {
-            throw new NotImplementedException();
+            List<QuestionDetail> data = new List<QuestionDetail>();
+            if (!string.IsNullOrEmpty(searchValue))
+                searchValue = "%" + searchValue + "%";
+            using (var connection = OpenConnection())
+            {
+                var sql = @";WITH questionDetailCTE AS
+                            (
+                                SELECT	t.TermID, 
+		                                t.TermName, 
+		                                k.KnowledgeId, 
+		                                k.KnowledgeName,
+		                                qd.QuestionText,
+		                                qd.QuestionType,
+		                                qd.QuestionPoint,
+		                                qd.AccountId,
+		                                ROW_NUMBER() OVER (ORDER BY QuestionDetailID DESC) as RowNumber
+	                            FROM QuestionDetail qd
+	                            INNER JOIN Knowledges k ON qd.KnowledgeId = k.KnowledgeId
+	                            INNER JOIN Terms t ON t.TermID = k.TermID
+	                            WHERE ((@SearchValue = N'') OR (qd.QuestionText LIKE @SearchValue))
+		                            AND (@QuestionType = 0 OR qd.QuestionType = @QuestionType)
+		                            AND (@KnowledgeId = 0 OR k.KnowledgeId = @KnowledgeId)
+		                            AND (@AccountId = N'' or qd.AccountId = @AccountId)
+                            )
+                            SELECT * FROM questionDetailCTE
+                            WHERE (@PageSize = 0) 
+                                OR (RowNumber BETWEEN (@Page - 1) * @PageSize + 1 and @Page * @PageSize)
+                            order by RowNumber";
+                var parameters = new
+                {
+                    Page = page,
+                    PageSize = pageSize,
+                    SearchValue = searchValue ?? "",
+                    TermID = termId,
+                    AccountId = AccountId   
+                };
+                data = connection.Query<QuestionDetail>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text).ToList();
+                connection.Close();
+            }
+            return data;
+        }
+
+        public IList<QuestionDetail> List(int page = 1, int pageSize = 0, string searchValue = "", int questionType = 0, int knowledgeId = 0, int AccountId = 0)
+        {
+            List<QuestionDetail> data = new List<QuestionDetail>();
+            if (!string.IsNullOrEmpty(searchValue))
+                searchValue = "%" + searchValue + "%";
+            using (var connection = OpenConnection())
+            {
+                var sql = @";WITH questionDetailCTE AS
+                            (
+                            SELECT	qd.QuestionDetailId,
+                                    qd.QuestionText,
+		                            qd.QuestionType,
+		                            qd.QuestionPoint,
+		                            qd.AccountId,
+                                    t.TermID AS TermID, 
+                                    t.TermName AS TermName, 
+                                    k.KnowledgeId AS KnowledgeId, 
+                                    k.KnowledgeName AS KnowledgeName,
+		                            ROW_NUMBER() OVER (ORDER BY QuestionDetailID DESC) as RowNumber
+	                        FROM QuestionDetail qd
+	                        INNER JOIN Knowledges k ON qd.KnowledgeId = k.KnowledgeId
+	                        INNER JOIN Terms t ON t.TermID = k.TermID
+	                        WHERE ((@SearchValue = N'') OR (qd.QuestionText LIKE @SearchValue))
+		                        AND (@QuestionType = 0 OR qd.QuestionType = @QuestionType)
+		                        AND (@KnowledgeId = 0 OR k.KnowledgeId = @KnowledgeId)
+		                        AND (@AccountId = 0 OR qd.AccountId = @AccountId)
+                            )
+                            SELECT * FROM questionDetailCTE
+                            WHERE (@PageSize = 0) 
+                                OR (RowNumber BETWEEN (@Page - 1) * @PageSize + 1 and @Page * @PageSize)
+                            order by RowNumber";
+                var parameters = new
+                {
+                    Page = page,
+                    PageSize = pageSize,
+                    SearchValue = searchValue,
+                    QuestionType = questionType,
+                    KnowledgeId = knowledgeId,
+                    AccountId = AccountId,
+                    
+                };
+                // data = connection.Query<QuestionDetail>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text).ToList();
+                data = connection.Query<QuestionDetail, Terms, Knowledges, QuestionDetail>(sql, (questionDetail, term, knowledge) =>
+                {
+                    questionDetail.knowledges = knowledge;
+                    questionDetail.knowledges.Terms = term;
+                    return questionDetail;
+                }, 
+                splitOn: "TermID,KnowledgeId",
+                param: parameters,
+                commandType: System.Data.CommandType.Text).ToList();
+            }
+            //Console.WriteLine(data[0].QuestionText);
+            return data;
         }
 
         public bool Update(QuestionDetail data)
@@ -168,7 +317,7 @@ namespace UMS.Quiz.DataLayers.SQLServer
                             where QuestionDetailID = @QuestionDetailID";
                 var parameters = new
                 {
-                    QuestionType = data.QuestionType ?? "",
+                    QuestionType = data.QuestionType,
                     QuestionText = data.QuestionText ?? "",
                     QuestionPoint = data.QuestionPoint,
                 };

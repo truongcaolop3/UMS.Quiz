@@ -68,6 +68,9 @@ namespace UMS.Quiz.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExamID"), 1L, 1);
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");
 
@@ -95,6 +98,9 @@ namespace UMS.Quiz.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExamDetailAnswerID"), 1L, 1);
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
                     b.Property<float>("AllPoint")
                         .HasColumnType("real");
 
@@ -118,6 +124,9 @@ namespace UMS.Quiz.Web.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExamDetailCandidatesID"), 1L, 1);
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
 
                     b.Property<string>("AccountStudent")
                         .HasColumnType("nvarchar(max)");
@@ -155,6 +164,9 @@ namespace UMS.Quiz.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExamQuestionID"), 1L, 1);
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ExamQuestionName")
                         .HasColumnType("nvarchar(max)");
 
@@ -167,8 +179,8 @@ namespace UMS.Quiz.Web.Migrations
                     b.Property<string>("QuestionText")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("QuestionType")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("QuestionType")
+                        .HasColumnType("int");
 
                     b.Property<bool?>("Status")
                         .HasColumnType("bit");
@@ -190,6 +202,9 @@ namespace UMS.Quiz.Web.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("KnowledgeId"), 1L, 1);
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
 
                     b.Property<string>("KnowledgeName")
                         .HasColumnType("nvarchar(max)");
@@ -217,50 +232,31 @@ namespace UMS.Quiz.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("QuestionDetailID"), 1L, 1);
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("KnowledgeId")
+                        .HasColumnType("int");
+
                     b.Property<int>("QuestionPoint")
                         .HasColumnType("int");
 
                     b.Property<string>("QuestionText")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("QuestionType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("QuizQuestionId")
+                    b.Property<int>("QuestionType")
                         .HasColumnType("int");
 
-                    b.Property<int>("TopicTemplateID")
+                    b.Property<int?>("TopicTemplateID")
                         .HasColumnType("int");
 
                     b.HasKey("QuestionDetailID");
 
-                    b.HasIndex("QuizQuestionId")
-                        .IsUnique();
+                    b.HasIndex("KnowledgeId");
 
                     b.HasIndex("TopicTemplateID");
 
                     b.ToTable("QuestionDetail");
-                });
-
-            modelBuilder.Entity("UMS.Quiz.DomainModels.QuizQuestion", b =>
-                {
-                    b.Property<int>("QuizQuestionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("QuizQuestionId"), 1L, 1);
-
-                    b.Property<int?>("KnowledgeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("QuizNumber")
-                        .HasColumnType("int");
-
-                    b.HasKey("QuizQuestionId");
-
-                    b.HasIndex("KnowledgeId");
-
-                    b.ToTable("QuizQuestions");
                 });
 
             modelBuilder.Entity("UMS.Quiz.DomainModels.QuizQuestionAnswer", b =>
@@ -270,6 +266,9 @@ namespace UMS.Quiz.Web.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("QuizQuestionAnswerID"), 1L, 1);
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
 
                     b.Property<string>("AnswerText")
                         .HasColumnType("nvarchar(max)");
@@ -295,6 +294,9 @@ namespace UMS.Quiz.Web.Migrations
                     b.Property<string>("TermID")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
                     b.Property<string>("TermName")
                         .HasColumnType("nvarchar(max)");
 
@@ -310,6 +312,9 @@ namespace UMS.Quiz.Web.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TopicTemplateID"), 1L, 1);
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ExamTime")
                         .HasColumnType("int");
@@ -383,30 +388,17 @@ namespace UMS.Quiz.Web.Migrations
 
             modelBuilder.Entity("UMS.Quiz.DomainModels.QuestionDetail", b =>
                 {
-                    b.HasOne("UMS.Quiz.DomainModels.QuizQuestion", "QuizQuestion")
-                        .WithOne("QuestionDetail")
-                        .HasForeignKey("UMS.Quiz.DomainModels.QuestionDetail", "QuizQuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("UMS.Quiz.DomainModels.Knowledges", "knowledges")
+                        .WithMany("questionDetails")
+                        .HasForeignKey("KnowledgeId");
 
                     b.HasOne("UMS.Quiz.DomainModels.TopicTemplate", "TopicTemplate")
                         .WithMany("questionDetails")
-                        .HasForeignKey("TopicTemplateID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("QuizQuestion");
+                        .HasForeignKey("TopicTemplateID");
 
                     b.Navigation("TopicTemplate");
-                });
 
-            modelBuilder.Entity("UMS.Quiz.DomainModels.QuizQuestion", b =>
-                {
-                    b.HasOne("UMS.Quiz.DomainModels.Knowledges", "Knowledge")
-                        .WithMany()
-                        .HasForeignKey("KnowledgeId");
-
-                    b.Navigation("Knowledge");
+                    b.Navigation("knowledges");
                 });
 
             modelBuilder.Entity("UMS.Quiz.DomainModels.QuizQuestionAnswer", b =>
@@ -435,14 +427,14 @@ namespace UMS.Quiz.Web.Migrations
                     b.Navigation("Exam");
                 });
 
+            modelBuilder.Entity("UMS.Quiz.DomainModels.Knowledges", b =>
+                {
+                    b.Navigation("questionDetails");
+                });
+
             modelBuilder.Entity("UMS.Quiz.DomainModels.QuestionDetail", b =>
                 {
                     b.Navigation("QuizQuestionAnswers");
-                });
-
-            modelBuilder.Entity("UMS.Quiz.DomainModels.QuizQuestion", b =>
-                {
-                    b.Navigation("QuestionDetail");
                 });
 
             modelBuilder.Entity("UMS.Quiz.DomainModels.Terms", b =>

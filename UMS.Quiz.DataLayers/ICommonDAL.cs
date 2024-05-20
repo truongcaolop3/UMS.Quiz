@@ -24,8 +24,9 @@ namespace UMS.Quiz.DataLayers
         /// <param name="pageSize">Số dòng trên mỗi trang (bằng 0 nếu không phân trang)</param>
         /// <param name="searchValue">Giá trị tìm kiếm (chuỗi rỗng nếu lấy toàn bộ dữ liệu)</param>
         /// <param name="termId">Học phần tác nghiệp</param>
+        /// /// <param name="AccountId">ID của giảng viên tác nghiệp</param>
         /// <returns></returns>
-        IList<T> List(int page = 1, int pageSize = 0, string searchValue = "", string termId = "");
+        IList<T> List(int page = 1, int pageSize = 0, string searchValue = "", string termId = "" , int AccountId = 0);
 
         /// <summary>
         /// Đếm số lượng dòng dữ liệu tìm được
@@ -40,7 +41,7 @@ namespace UMS.Quiz.DataLayers
         /// <param name="searchValue">Giá trị tìm kiếm (chuỗi rỗng nếu lấy toàn bộ dữ liệu)</param>
         /// <param name="termId">Học phần tác nghiệp</param>
         /// <returns></returns>
-        int Count(string searchValue = "", string termID = "");
+        int Count(string searchValue = "", string termID = "", int AccountId = 0);
 
         /// <summary>
         /// Lấy một bản ghi/dòng dữ liệu dựa trên mã (id)
@@ -48,6 +49,14 @@ namespace UMS.Quiz.DataLayers
         /// <param name="id"></param>
         /// <returns></returns>
         T? Get(int id);
+
+        /// <summary>
+        /// Lấy một bản ghi/dòng dữ liệu dựa trên mã (id)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        T? Get(string id);
+
         /// <summary>
         /// Bổ sung dữ liệu vào trong CSDL. Hàm trả về ID của dữ liệu được bổ sung.
         /// (Trả về giá trị nhỏ hơn hoặc bằng 0 nếu lỗi)

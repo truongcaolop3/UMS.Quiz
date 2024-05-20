@@ -13,12 +13,11 @@
                 <select class="form-control" name="category" id="categorySelect" disabled>
                     <option id="_studyModuleName"></option>
                     @Html.ValidationMessage(nameof(Model.TermID), new { @style = "color:#f00" })
-                    
                 </select>
             </div>
             <div class="mb-3">
                 <label for="recipient-name" class="col-form-label fs-5">Nhập tên khối kiến thức:</label>
-                <input type="text" class="form-control" id="recipient-name" name="KnowledgeName" value="@Model.KnowledgeName">
+                <input type="text" class="form-control" id="recipient-name" name="KnowledgeName" value="@Model.KnowledgeName" autofocus>
                 @* <input type="text" class="form-control" id="recipient-name"> *@
                 @Html.ValidationMessage(nameof(Model.KnowledgeName), new { @style = "color:#f00" })
             </div>

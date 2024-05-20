@@ -14,8 +14,6 @@ namespace UMS.Quiz.DataLayers.SQLServer
         public KnowledgesDAL(string connectionString) : base(connectionString)
         {
         }
-
-
         public int Add(Knowledges data)
         {
             int id = 0;
@@ -23,13 +21,15 @@ namespace UMS.Quiz.DataLayers.SQLServer
                 //insert into Knowledges(KnowledgeName, TermID)
                 //            values(@KnowledgeName, @TermID)
             {
-                var sql = @"insert into Knowledges(KnowledgeName, TermID)
-                            values(@KnowledgeName, @TermID);
+                var sql = @"insert into Knowledges(KnowledgeName, TermID, AccountId)
+                            values(@KnowledgeName, @TermID,@AccountId);
                             select @@identity;";
+                
                 var parameters = new
                 {
                     KnowledgeName = data.KnowledgeName,
                     TermID = data.TermID,
+                    AccountId = data.AccountId
                 };
                 id = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
                 connection.Close();
@@ -56,7 +56,7 @@ namespace UMS.Quiz.DataLayers.SQLServer
             return count;
         }
 
-        public int Count(string searchValue = "", string termID = "")
+        public int Count(string searchValue = "", string termID = "", int AccountId = 0)
         {
             int count = 0;
             if (!string.IsNullOrEmpty(searchValue))
@@ -64,14 +64,16 @@ namespace UMS.Quiz.DataLayers.SQLServer
             using (var connection = OpenConnection())
             {
                 var sql = @"select count(*) from Knowledges 
-                            where ((@searchValue = N'') or (KnowledgeName like @searchValue)) and TermID = @TermId ";
+                            where ((@searchValue = N'') or (KnowledgeName like @searchValue)) 
+                            and (@termId = N'' or TermID = @termId)
+                            and (@AccountId = N'' or AccountId = @AccountId)";
                 var parameters = new
                 {
                     searchValue = searchValue ?? "",
-                    TermId = termID
+                    TermId = termID,
+                    AccountId = AccountId
                 };
                 count = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
-                connection.Close();
             }
             return count;
         }
@@ -106,6 +108,11 @@ namespace UMS.Quiz.DataLayers.SQLServer
                 connection.Close();
             }
             return data;
+        }
+
+        public Knowledges? Get(string id)
+        {
+            throw new NotImplementedException();
         }
 
         public bool IsUsed(int id)
@@ -171,30 +178,36 @@ namespace UMS.Quiz.DataLayers.SQLServer
             return data;
         }
 
-        public IList<Knowledges> List(int page = 1, int pageSize = 0, string searchValue = "", string termId = "")
+        public IList<Knowledges> List(int page = 1, int pageSize = 0, string searchValue = "", string termId = "", int AccountId = 0 )
         {
             List<Knowledges> data = new List<Knowledges>();
             if (!string.IsNullOrEmpty(searchValue))
                 searchValue = "%" + searchValue + "%";
+
             using (var connection = OpenConnection())
             {
                 var sql = @";with cte as
-                            (
-                                select	*, row_number() over (order by KnowledgeName) as RowNumber
-                                from	Knowledges
-                                where	((@searchValue = N'') or (KnowledgeName like @searchValue)) and TermID = @TermId
-                            )
-                            select * from cte
-                            where  (@pageSize = 0) 
-                                or (RowNumber between (@page - 1) * @pageSize + 1 and @page * @pageSize)
-                            order by RowNumber";
+                    (
+                        select	*, row_number() over (order by KnowledgeName) as RowNumber
+                        from	Knowledges
+                        where	((@searchValue = N'') or (KnowledgeName like @searchValue)) 
+                                and (@termId = N'' or TermID = @termId)
+                                and (@AccountId = N'' or AccountId = @AccountId)
+                    )
+                    select * from cte
+                    where  (@pageSize = 0) 
+                        or (RowNumber between (@page - 1) * @pageSize + 1 and @page * @pageSize)
+                    order by RowNumber";
+
                 var parameters = new
                 {
                     page = page,
                     pageSize = pageSize,
                     searchValue = searchValue ?? "",
-                    TermID = termId,
+                    termId = termId ?? "",
+                    AccountId = AccountId
                 };
+
                 data = connection.Query<Knowledges>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text).ToList();
                 connection.Close();
             }

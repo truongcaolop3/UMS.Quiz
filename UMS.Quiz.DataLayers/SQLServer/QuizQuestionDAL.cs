@@ -9,7 +9,7 @@ using UMS.Quiz.DomainModels;
 
 namespace UMS.Quiz.DataLayers.SQLServer
 {
-    public class QuizQuestionDAL: _BaseDAL, ICommonDAL<QuizQuestion>
+    public class QuizQuestionDAL : _BaseDAL, ICommonDAL<QuizQuestion>
     {
         public QuizQuestionDAL(string connectionString) : base(connectionString)
         {
@@ -19,18 +19,19 @@ namespace UMS.Quiz.DataLayers.SQLServer
         public int Add(QuizQuestion data)
         {
             int id = 0;
-            //using (var connection = OpenConnection())
-            //{
-            //    var sql = @"insert into Suppliers(KnowledgeName)
-            //                values(@KnowledgeName);
-            //                select @@identity;";
-            //    var parameters = new
-            //    {
-            //        SupplierName = data.KnowledgeName,
-            //    };
-            //    id = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
-            //    connection.Close();
-            //}
+            using (var connection = OpenConnection())
+            {
+                var sql = @"insert into QuizQuestions(KnowledgeId, AccountId)
+                            values(@KnowledgeId@AccountId);
+                            select @@identity;";
+                var parameters = new
+                {
+                    KnowledgeId = data.KnowledgeId,
+                    Knowledge =   data.Knowledge,
+                };
+                id = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
+                connection.Close();
+            }
             return id;
         }
 
@@ -42,18 +43,18 @@ namespace UMS.Quiz.DataLayers.SQLServer
             using (var connection = OpenConnection())
             {
                 var sql = @"select count(*) from QuizQuestion 
-                            where (@searchValue = N'') or (KnowledgedId like @searchValue)";
+                            where (@searchValue = N'') or (KnowledgeId like @searchValue)";
                 var parameters = new
                 {
                     searchValue = searchValue ?? "",
                 };
                 count = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
-                connection.Close();
+
             }
             return count;
         }
 
-        public int Count(string searchValue = "", string termID = "")
+        public int Count(string searchValue = "", string termID = "", int AccountId = 0)
         {
             int count = 0;
             if (!string.IsNullOrEmpty(searchValue))
@@ -62,15 +63,16 @@ namespace UMS.Quiz.DataLayers.SQLServer
             {
                 //as q
                 //Join Knowledges as k ON q.KnowledgeId = k.KnowledgeId
-                var sql = @"select count(*) from QuizQuestions 
-                            where ((@searchValue = N'') or (KnowledgedId like @searchValue)) and TermID = @TermId ";
+                var sql = @"SELECT COUNT(*)
+                            FROM Knowledges
+                            WHERE ((@searchValue = N'') OR (KnowledgeName LIKE '%' + @searchValue + '%')) AND TermID = @TermId";
                 var parameters = new
                 {
                     searchValue = searchValue ?? "",
                     TermId = termID
                 };
                 count = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
-                connection.Close();
+
             }
             return count;
         }
@@ -94,16 +96,21 @@ namespace UMS.Quiz.DataLayers.SQLServer
         public QuizQuestion? Get(int id)
         {
             QuizQuestion? data = null;
-            using (var connection = OpenConnection())
-            {
-                var sql = @"select * from QuizQuestion as q
-                                    Join knowledges as k ON k.knowledgeId = q.KnowledgeId
-                                    where QuizQuestionId = @QuizQuestionId";
-                var parameters = new { QuizQuestionId = id };
-                data = connection.QueryFirstOrDefault<QuizQuestion>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
-                connection.Close();
-            }
+            //using (var connection = OpenConnection())
+            //{
+            //    var sql = @"select * from QuizQuestions as q
+            //                        Join knowledges as k ON k.knowledgeId = q.KnowledgeId
+            //                        where QuizQuestionId = @QuizQuestionId";
+            //    var parameters = new { QuizQuestionId = id };
+            //    data = connection.QueryFirstOrDefault<QuizQuestion>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
+            //    connection.Close();
+            //}
             return data;
+        }
+
+        public QuizQuestion? Get(string id)
+        {
+            throw new NotImplementedException();
         }
 
         public bool IsUsed(int id)
@@ -139,6 +146,7 @@ namespace UMS.Quiz.DataLayers.SQLServer
                             where  (@pageSize = 0) 
                              or (RowNumber between (@page - 1) * @pageSize + 1 and @page * @pageSize)
                             order by RowNumber";
+
                 var parameters = new
                 {
                     page = page,
@@ -146,7 +154,7 @@ namespace UMS.Quiz.DataLayers.SQLServer
                     searchValue = searchValue ?? ""
                 };
                 data = connection.Query<QuizQuestion>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text).ToList();
-                connection.Close();
+
             }
             return data;
         }
@@ -158,16 +166,28 @@ namespace UMS.Quiz.DataLayers.SQLServer
                 searchValue = "%" + searchValue + "%";
             using (var connection = OpenConnection())
             {
-                var sql = @";with cte as
-                            (
-                                select	*, row_number() over (order by KnowledgeName) as RowNumber
-                                from	Knowledges
-                                where	((@searchValue = N'') or (KnowledgeName like @searchValue)) and TermID = @TermId
-                            )
-                            select * from cte
-                            where  (@pageSize = 0)
-                                or (RowNumber between (@page - 1) * @pageSize + 1 and @page * @pageSize)
-                            order by RowNumber";
+                var sql = @";WITH cte AS
+                (
+                    SELECT *, ROW_NUMBER() OVER (ORDER BY KnowledgeName) AS RowNumber
+                    FROM Knowledges
+                    WHERE ((@searchValue = N'') OR (KnowledgeName LIKE '%' + @searchValue + '%')) AND TermID = @TermId
+                )
+                SELECT k.*, q.*
+                FROM cte AS k
+                LEFT JOIN QuizQuestions AS q ON k.KnowledgeId = q.KnowledgeId
+                WHERE k.RowNumber BETWEEN (@page - 1) * @pageSize + 1 AND @page * @pageSize
+                ORDER BY k.RowNumber;
+
+                -- Count total rows that match the criteria
+
+                SELECT COUNT(*)
+                FROM Knowledges
+                WHERE ((@searchValue = N'') OR (KnowledgeName LIKE '%' + @searchValue + '%')) AND TermID = @TermId
+                ";
+                // đếm số dòng dữ liệu
+                //SELECT COUNT(*)
+                //        FROM Knowledges
+                //        WHERE((@searchValue = N'') OR(KnowledgeName LIKE '%' + @searchValue + '%')) AND TermID = @TermId
                 var parameters = new
                 {
                     page = page,
@@ -176,9 +196,14 @@ namespace UMS.Quiz.DataLayers.SQLServer
                     TermID = termId,
                 };
                 data = connection.Query<QuizQuestion>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text).ToList();
-                connection.Close();
+
             }
             return data;
+        }
+
+        public IList<QuizQuestion> List(int page = 1, int pageSize = 0, string searchValue = "", string termId = "", int AccountId = 0)
+        {
+            throw new NotImplementedException();
         }
 
         public bool Update(QuizQuestion data)

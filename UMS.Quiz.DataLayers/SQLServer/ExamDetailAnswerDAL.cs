@@ -55,7 +55,7 @@ namespace UMS.Quiz.DataLayers.SQLServer
             return count;
         }
 
-        public int Count(string searchValue = "", string termID = "")
+        public int Count(string searchValue = "", string termID = "", int AccountId = 0)
         {
             throw new NotImplementedException();
         }
@@ -87,6 +87,11 @@ namespace UMS.Quiz.DataLayers.SQLServer
                 connection.Close();
             }
             return data;
+        }
+
+        public ExamDetailAnswer? Get(string id)
+        {
+            throw new NotImplementedException();
         }
 
         public bool IsUsed(int id)
@@ -157,6 +162,11 @@ namespace UMS.Quiz.DataLayers.SQLServer
         }
 
         public IList<ExamDetailAnswer> List(int page = 1, int pageSize = 0, string searchValue = "", string termId = "")
+        {
+            throw new NotImplementedException();
+        }
+
+        public IList<ExamDetailAnswer> List(int page = 1, int pageSize = 0, string searchValue = "", string termId = "", int AccountId = 0)
         {
             throw new NotImplementedException();
         }

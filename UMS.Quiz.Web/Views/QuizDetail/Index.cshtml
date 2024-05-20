@@ -1,0 +1,112 @@
+﻿@using UMS.Quiz.Web.Constants;
+@model UMS.Quiz.Web.Models.QuestionDetailInput
+@{
+    // Layout = null;
+}
+<div class="box box-primary  shadow-lg p-3 mb-5 rounded">
+    <div class="box-body">
+        <!-- Form nhập đầu vào tìm kiếm -->
+        <form id="formSearch" action="~/QuizDetail/Search" method="POST" data-container="#searchResult">
+            <input type="hidden" name="@nameof(Model.PageSize)" value="@Model.PageSize" />
+            <div class="container-fluid row p-0">
+                <div class="col-sm-3">
+                    <label for="recipient-name" class="col-form-label fs-5">Học phần:</label>
+                    <input type="hidden" id="_studyModuleId" name="@nameof(Model.TermID)" value="@Model.TermID" />
+                    <select class="form-control" id="mySelect" overflow-y: scroll; name="Terms" disabled>
+                        <option id="_studyModuleName" name="TermName"></option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <label for="recipient-name" class="col-form-label fs-5">Khối kiến thức:</label>
+                    @* <select class="form-control" id="mySelect" overflow-y: scroll; name="Terms" disabled>
+                        <option>KnowledgeName</option>
+                    </select> *@
+                    <input id="inputKnowlege" name="@nameof(Model.KnowledgeId)" type="text" class="form-control"
+                           value="@Model.KnowledgeId" disabled>
+                </div>
+                <div class="col-sm-3">
+                    <label for="recipient-name" class="col-form-label fs-5">Kiểu câu hỏi:</label>
+                    <select class="form-control" id="mySelect" overflow-y: scroll; name="@nameof(Model.QuestionType)">
+                        <option selected="@(@Model.QuestionType == QuestionTypeConstant.DEFAULT)"
+                            value="@QuestionTypeConstant.DEFAULT">
+                            Chọn tất cả
+                        </option>
+
+                        <option selected="@(@Model.QuestionType == QuestionTypeConstant.CHOOSE_ONE_ANSWER)"
+                            value="@QuestionTypeConstant.CHOOSE_ONE_ANSWER">
+                            Câu hỏi chỉ chọn 1 trong số các đáp án
+                        </option>
+
+                        <option 
+                            selected="@(@Model.QuestionType == QuestionTypeConstant.CHOOSE_MULTI_ANSWERS)"
+                            value="@QuestionTypeConstant.CHOOSE_MULTI_ANSWERS">
+                            Câu hỏi cho chọn nhiều đáp án trong số các đáp án
+                        </option>
+
+                        <option selected="@(@Model.QuestionType == QuestionTypeConstant.CHOOSE_TEXT_ANSWER)" 
+                            value="@QuestionTypeConstant.CHOOSE_TEXT_ANSWER">
+                            Câu hỏi dạng điền từ(text) ngắn gọn
+                        </option>
+                    </select>
+                </div>
+                <div class=" col-sm-3  ">
+                    <label for="recipient-name" class="col-form-label fs-5 d-block">Tìm kiếm (khối kiến thức và học phần):</label>
+                    <div class="d-flex align-items-center">
+                        <input id="inputSearch" name="@nameof(Model.SearchValue)" type="text" class="form-control"
+                               placeholder="Nội dung cần tìm kiếm" value="@Model.SearchValue">
+                        <div class="d-flex align-items-end justify-content-start">
+                            <button class="btn btn-info" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- Hiển thị kết quả tìm kiếm -->
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $("#formSearch").submit(function (e) {
+                e.preventDefault();
+                doSearch(this, 1);
+                return false;
+            });
+            doSearch("#formSearch", @Model.Page);
+
+            // theo dõi sự thay đổi của input search
+            $('#inputSearch').change(function () {
+                const searchValue = $(this).val();
+                if (!searchValue) {
+                    doSearch("#formSearch", @Model.Page);
+                    return;
+                }
+            });
+        });
+        function doSearch(formSearch, page) {
+            const url = $(formSearch).prop("action");
+            console.log('===> urlsearch: ', url);
+            const container = $(formSearch).data("container");
+            var postData = $(formSearch).serializeArray();
+            const knowledgeId = $('#inputKnowlege').val();
+            postData.push({ "name": "page", "value": page }, { "name": "knowledgeId", "value": knowledgeId });
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: postData,
+                error: function (err) {
+                    console.log('===> err: ', err);
+                    alert("Your request is not valid!");
+                },
+                success: function (data) {
+                    $("#searchResult").html(data);
+                }
+            });
+        }
+    </script>
+}

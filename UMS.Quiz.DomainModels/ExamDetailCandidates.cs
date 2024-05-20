@@ -56,6 +56,9 @@ namespace UMS.Quiz.DomainModels
         /// </summary>
         public ICollection<ExamDetailAnswer> examDetailAnswers { get; set; } = new List<ExamDetailAnswer>();
 
-
+        /// <summary>
+        /// thuộc người dùng nào 
+        /// </summary>
+        public int AccountId { get; set; }
     }
 }

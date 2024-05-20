@@ -1,4 +1,5 @@
 ﻿using UMS.Quiz.DomainModels;
+using UMS.Quiz.Web.Constants;
 
 namespace UMS.Quiz.Web.Models
 {
@@ -29,21 +30,23 @@ namespace UMS.Quiz.Web.Models
     {
         public List<Knowledges> Data { get; set; } = new List<Knowledges>();
         public string? TermID { get; set; }
+        public int AccountId { get; set; }
     }
-    /// <summary>
-    /// 
-    /// </summary>
-    public class QuizQuestionSearchResult : BasePaginationResult
-    {
-        public List<QuizQuestion> Data { get; set; } = new List<QuizQuestion>();
-        public string? TermID { get; set; }
-    }
+    ///// <summary>
+    ///// 
+    ///// </summary>
+    //public class QuizQuestionSearchResult : BasePaginationResult
+    //{
+    //    public List<QuizQuestion> Data { get; set; } = new List<QuizQuestion>();
+    //    public string? TermID { get; set; }
+    //}
     /// <summary>
     /// 
     /// </summary>
     public class QuestionDetailSearchResult : BasePaginationResult
     {
         public List<QuestionDetail> Data { get; set; } = new List<QuestionDetail>();
+
     }
     /// <summary>
     /// 

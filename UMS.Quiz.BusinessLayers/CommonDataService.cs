@@ -20,11 +20,12 @@ namespace UMS.Quiz.BusinessLayers
     public static class CommonDataService
     {
         private static readonly ICommonDAL<Knowledges> KnowledgesDB;
-        private static readonly ICommonDAL<QuizQuestion> QuizQuestionDB;
-        private static readonly ICommonDAL<QuestionDetail> QuestionDetailDB;
+        //private static readonly ICommonDAL<QuizQuestion> QuizQuestionDB;
+        private static readonly IQuestionDetailDAL QuestionDetailDB;
         private static readonly ICommonDAL<QuizQuestionAnswer> QuizQuestionAnswerDB;
         private static readonly ICommonDAL<TopicTemplate> TopicTemplateDB;
         private static readonly ICommonDAL<Account> AccountDB;
+        private static readonly ICommonDAL<Terms> TermDB;
 
         /// <summary>
         /// Ctor
@@ -34,11 +35,12 @@ namespace UMS.Quiz.BusinessLayers
             string connectionString = Configuration.ConnectionString;
 
             KnowledgesDB = new KnowledgesDAL(connectionString);
-            QuizQuestionDB = new QuizQuestionDAL(connectionString);
+            // QuizQuestionDB = new QuizQuestionDAL(connectionString);
             QuestionDetailDB = new QuestionDetailDAL(connectionString);
             QuizQuestionAnswerDB = new QuizQuestionAnswerDAL(connectionString);
             TopicTemplateDB = new TopicTemplateDAL(connectionString);
             AccountDB = new AccountDAL(connectionString);
+            TermDB = new TermDAL(connectionString);
         }
         /// <summary>
         /// Tìm kiếm và lấy danh sách khối kiến thức
@@ -48,10 +50,10 @@ namespace UMS.Quiz.BusinessLayers
         /// <param name="pageSize"></param>
         /// <param name="searchValue"></param>
         /// <returns></returns>
-        public static List<Knowledges> ListOfKnowledges(out int rowCount , int page = 1, int pageSize = 0, string searchValue = "", string termID = "")
+        public static List<Knowledges> ListOfKnowledges(out int rowCount , int page = 1, int pageSize = 0, string searchValue = "", string termID = "" , int AccountId = 0)
         {
-            rowCount = KnowledgesDB.Count(searchValue, termID);
-            return KnowledgesDB.List(page, pageSize, searchValue, termID).ToList();
+            rowCount = KnowledgesDB.Count(searchValue, termID, AccountId);
+            return KnowledgesDB.List(page, pageSize, searchValue, termID,AccountId).ToList();
         }
         /// <summary>
         /// Lấy thông tin của một khối kiến thức theo mã học phần
@@ -99,67 +101,68 @@ namespace UMS.Quiz.BusinessLayers
             return KnowledgesDB.IsUsed(id);
         }
 
-        /// <summary>
-        /// Tìm kiếm và lấy danh sách thư viện trắc nghiệm
-        /// </summary>
-        /// <param name="rowCount"></param>
-        /// <param name="page"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="searchValue"></param>
-        /// <returns></returns>
-        public static List<QuizQuestion> ListOfQuizQuestion(out int rowCount, int page = 1, int pageSize = 0, string searchValue = "", string termID = "")
-        {
-            rowCount = QuizQuestionDB.Count(searchValue, termID);
-            return QuizQuestionDB.List(page, pageSize, searchValue, termID).ToList();
-        }
-        /// <summary>
-        /// Lấy thông tin của một khối kiến thức theo mã học phần
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public static QuizQuestion? GetQuizQuestion(int id)
-        {
-            return QuizQuestionDB.Get(id);
-        }
-        /// <summary>
-        /// Bổ sung khối kiến thức
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public static int AddQuizQuestion(QuizQuestion data)
-        {
-            return QuizQuestionDB.Add(data);
-        }
-        /// <summary>
-        /// Cập nhật khối kiến thức
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public static bool UpdateQuizQuestion(QuizQuestion data)
-        {
-            return QuizQuestionDB.Update(data);
-        }
-        /// <summary>
-        /// Xóa nhà khối kiến thức có mã là id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public static bool DeleteQuizQuestion(int id)
-        {
-            //if (QuizQuestionDB.IsUsed(id))
-            //    return false;
-            //return QuizQuestionDB.Delete(id);
-            return QuizQuestionDB.IsUsed(id) && QuizQuestionDB.Delete(id);
-        }
-        /// <summary>
-        /// Kiểm tra xem khối kiến thức có mã id hiện có dữ liệu liên quan hay không?
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public static bool IsUsedQuizQuestion(int id)
-        {
-            return QuizQuestionDB.IsUsed(id);
-        }
+        ///// <summary>
+        ///// Tìm kiếm và lấy danh sách thư viện trắc nghiệm
+        ///// </summary>
+        ///// <param name="rowCount"></param>
+        ///// <param name="page"></param>
+        ///// <param name="pageSize"></param>
+        ///// <param name="searchValue"></param>
+        ///// <param name="termID"></param>
+        ///// <returns></returns>
+        //public static List<QuizQuestion> ListOfQuizQuestion(out int rowCount, int page = 1, int pageSize = 0, string searchValue = "", string termID = "")
+        //{
+        //    rowCount = QuizQuestionDB.Count(searchValue, termID);
+        //    return QuizQuestionDB.List(page, pageSize, searchValue, termID).ToList();
+        //}
+        ///// <summary>
+        ///// Lấy thông tin của một khối kiến thức theo mã học phần
+        ///// </summary>
+        ///// <param name="id"></param>
+        ///// <returns></returns>
+        //public static QuizQuestion? GetQuizQuestion(int id)
+        //{
+        //    return QuizQuestionDB.Get(id);
+        //}
+        ///// <summary>
+        ///// Bổ sung khối kiến thức
+        ///// </summary>
+        ///// <param name="data"></param>
+        ///// <returns></returns>
+        //public static int AddQuizQuestion(QuizQuestion data)
+        //{
+        //    return QuizQuestionDB.Add(data);
+        //}
+        ///// <summary>
+        ///// Cập nhật khối kiến thức
+        ///// </summary>
+        ///// <param name="data"></param>
+        ///// <returns></returns>
+        //public static bool UpdateQuizQuestion(QuizQuestion data)
+        //{
+        //    return QuizQuestionDB.Update(data);
+        //}
+        ///// <summary>
+        ///// Xóa nhà khối kiến thức có mã là id
+        ///// </summary>
+        ///// <param name="id"></param>
+        ///// <returns></returns>
+        //public static bool DeleteQuizQuestion(int id)
+        //{
+        //    //if (QuizQuestionDB.IsUsed(id))
+        //    //    return false;
+        //    //return QuizQuestionDB.Delete(id);
+        //    return QuizQuestionDB.IsUsed(id) && QuizQuestionDB.Delete(id);
+        //}
+        ///// <summary>
+        ///// Kiểm tra xem khối kiến thức có mã id hiện có dữ liệu liên quan hay không?
+        ///// </summary>
+        ///// <param name="id"></param>
+        ///// <returns></returns>
+        //public static bool IsUsedQuizQuestion(int id)
+        //{
+        //    return QuizQuestionDB.IsUsed(id);
+        //}
 
         /// <summary>
         /// Tìm kiếm và lấy danh sách câu hỏi trắc nghiệm của một thư viện 
@@ -169,13 +172,13 @@ namespace UMS.Quiz.BusinessLayers
         /// <param name="pageSize"></param>
         /// <param name="searchValue"></param>
         /// <returns></returns>
-        public static List<QuestionDetail> ListOfQuestionDetail(out int rowCount, int page = 1, int pageSize = 0, string searchValue = "")
+        public static List<QuestionDetail> ListOfQuestionDetail(out int rowCount, int page = 1, int pageSize = 0, string searchValue = "", int questionType = 0, int knowledgeId = 0, int AccountId = 0)
         {
-            rowCount = QuestionDetailDB.Count(searchValue);
-            return QuestionDetailDB.List(page, pageSize, searchValue).ToList();
+            rowCount = QuestionDetailDB.Count(searchValue, questionType, knowledgeId, AccountId);
+            return QuestionDetailDB.List(page, pageSize, searchValue, questionType, knowledgeId, AccountId).ToList();
         }
         /// <summary>
-        /// Lấy thông tin của một khối kiến thức theo mã học phần
+        /// lấy thông tin câu hỏi trắc nghiệm theo mã khối kiến thức
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -361,6 +364,28 @@ namespace UMS.Quiz.BusinessLayers
         public static bool UpdateAccount(Account data)
         {
             return AccountDB.Update(data);
+        }
+
+        //public static IEnumerable<QuizQuestion> ListOfQuizQuestion(out object rowCount, object pageSize, object searchValue, object termID)
+        //{
+        //    throw new NotImplementedException();
+        //}
+        /// <summary>
+        /// Bổ sung khối kiến thức
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static int AddTerm(Terms data)
+        {
+            return TermDB.Add(data);
+        }
+        /// Bổ sung khối kiến thức
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static Terms? GetTerm(string id)
+        {
+            return TermDB.Get(id);
         }
     }
 

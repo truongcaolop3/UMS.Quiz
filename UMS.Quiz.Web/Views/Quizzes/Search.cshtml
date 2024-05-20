@@ -1,12 +1,10 @@
-﻿@model UMS.Quiz.Web.Models.QuizQuestionSearchResult
+﻿@model UMS.Quiz.Web.Models.KnowledgesSearchResult
 @{
     Layout = null;
-    var Count = 1;
 }
 <div>
-
     <p style="margin:10px 0 10px 0">
-        Có <strong>@Model.RowCount</strong> nhân viên trong tổng số <strong>@Model.PageCount</strong> trang
+        Có <strong>@Model.RowCount</strong> khối kiến thức trong tổng số <strong>@Model.PageCount</strong> trang
     </p>
 
     @if (Model.Data.Count == 0)
@@ -15,34 +13,32 @@
     }
     else
     {
+
         <div class="table-responsive">
             <table class="table table-bordered table-hover ">
 
                 <thead>
                     <tr class="bg-light ">
                         <th style="width:30px">STT</th>
-                        @* <th>Tên khối kiến thức</th> *@
-                        @* <th>Tên học phần</th> *@
-                        <th >
-                            Câu hỏi
+                        <th>Tên khối kiến thức</th>
+                        <th style="width:55px " class="text-center">
+
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.Data)
+                    @for (var index = 0; index < Model.Data.Count; index++)
                     {
+                        var item = Model.Data[index];
                         <tr>
-                            <td>@Count</td> <!-- Hiển thị số thứ tự -->
-                            @* <td>@item.KnowledgeName</td> *@
-                            <td>@item.QuizNumber</td>
-                            @* <td id="_studyModuleName">@item.TermID.</td> *@
+                            <td>@(index + 1)</td> <!-- Hiển thị số thứ tự -->
+                            <td>@item.KnowledgeName</td>
                             <td class="text-center">
-                                <a href="~/Quizzes/QuizDetail" class="btn btn-xs btn-secondary">
+                                <a href="~/QuizDetail/Index?knowledgeId=@item.KnowledgeId" class="btn btn-xs btn-secondary">
                                     <i class="bi bi-eye-fill"></i>
                                 </a>
                             </td>
                         </tr>
-                        Count++;
                     }
                 </tbody>
 
@@ -50,22 +46,21 @@
         </div>
 
         @*Phân trang*@
-        @* <div class="box-footer text-center">
-    <ul class="pagination d-flex justify-content-center">
-    @for (int i = 1; i <= Model.PageCount; i++)
-    {
-    if (i == Model.Page)
-    {
-    <li class="active page-item"><a class="page-link">@i</a></li>
-    }
-    else
-    {
-    <li class="page-item "><a class="page-link" href="javascript:;" onclick="doSearch('#formSearch', @i)">@i</a></li>
+        <div class="box-footer text-center">
+            <ul class="pagination d-flex justify-content-center">
+                @for (int i = 1; i <= Model.PageCount; i++)
+                {
+                    if (i == Model.Page)
+                    {
+                        <li class="active page-item"><a class="page-link">@i</a></li>
+                    }
+                    else
+                    {
+                        <li class="page-item "><a class="page-link" href="javascript:;" onclick="doSearch('#formSearch', @i)">@i</a></li>
+                    }
+                }
+            </ul>
+        </div>
 
     }
-    }
-    </ul>
-    </div> *@
-    }
-
 </div>

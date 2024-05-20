@@ -15,6 +15,7 @@ using UMS.Quiz.BusinessLayers;
 using UMS.Quiz.DomainModels;
 using UMS.Quiz.DataLayers.SQLServer;
 using UMS.Quiz.Web.Models.Accounts;
+using System.Net.Http.Headers;
 
 namespace UMS.Quiz.Web.Controllers
 {
@@ -175,7 +176,51 @@ namespace UMS.Quiz.Web.Controllers
             // Chuyển hướng người dùng đến trang đăng nhập hoặc trang chính
             return RedirectToAction("Login", "Account"); // Điều hướng đến trang đăng nhập
         }
-        public static bool UpdateAccountWithTerm(int accountId, string chooseTermId)
+
+        private static async Task<IReadOnlyList<ApiUmsStudyModuleResponse>> UmsStudyModuleApi(string searchValue = "")
+        {
+            try
+            {
+                // Khởi tạo một HttpClient để gửi yêu cầu HTTP.
+                using (HttpClient client = new())
+                {
+                    // Tạo URL hoàn chỉnh để gửi yêu cầu.
+                    var uri = $"{UmsApiConstant.BASE_URL}{UmsApiConstant.GET_STUDY_MODULE}";
+                    // Tạo chuỗi query parameters để thêm vào URL.
+                    var queryParams = $"?searchValue={searchValue}";
+                    // Thiết lập địa chỉ cơ sở cho HttpClient.
+                    client.BaseAddress = new Uri(uri);
+                    // Đặt header cho yêu cầu để chỉ rằng client mong đợi nhận dạng JSON.
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    // Gửi yêu cầu GET đến API và nhận phản hồi.
+                    HttpResponseMessage response = await client.GetAsync(queryParams);
+                    // Khởi tạo một danh sách chỉ đọc để lưu trữ dữ liệu trả về từ API.
+                    IReadOnlyList<ApiUmsStudyModuleResponse> studyModuleValue = null!;
+                    // Kiểm tra xem phản hồi có thành công không.
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Đọc nội dung phản hồi dưới dạng chuỗi.
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        // Giải mã chuỗi JSON thành đối tượng cụ thể.
+                        studyModuleValue = JsonConvert.DeserializeObject<BaseApiUmsResponse<BaseApiUmsPaginateResponse<ApiUmsStudyModuleResponse>>>(responseString)!.Data!.Value!;
+                    }
+                    else
+                    {
+                        // In ra mã lỗi và lý do lỗi nếu có lỗi.
+                        Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+                    }
+                    // Trả về kết quả là danh sách dữ liệu hoặc lỗi.
+                    return studyModuleValue;
+                }
+            }
+            catch
+            {
+                // Xử lý ngoại lệ và trả về lỗi 500.
+                return null!;
+            }
+        }
+
+        public static async Task<bool> UpdateAccountWithTermAsync(int accountId, string chooseTermId)
         {
             try
             {
@@ -187,9 +232,36 @@ namespace UMS.Quiz.Web.Controllers
                     return false;
                 }
 
+                // kiểm tra xem thử chooseTermId có trong csdl hay chưa?
+                var termDb = CommonDataService.GetTerm(chooseTermId);
+                if (termDb == null)
+                {
+                    // thêm từ api vào csdl
+                    var studyModules = await UmsStudyModuleApi(chooseTermId);
+
+                    foreach ( var studyModule in studyModules)
+                    {
+                        if (studyModule != null)
+                        {
+                            var termData = new Terms
+                            {
+                                TermID = studyModule.MaHocPhan,
+                                TermName = studyModule.TenHocPhan,
+                                Knowledges = null!,
+                            };
+                            
+                            CommonDataService.AddTerm(termData);
+                            //if (isCreated == 0)
+                            //{
+                            //    return false;
+                            //}
+                        }
+                    }
+                } 
+
                 // Cập nhật học phần cho tài khoản
                 account.TermId = chooseTermId;
-
+                
                 // Lưu thay đổi vào cơ sở dữ liệu
                 CommonDataService.UpdateAccount(account);
 
@@ -204,7 +276,7 @@ namespace UMS.Quiz.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateTerm(string chooseTermId)
+        public async Task<IActionResult> UpdateTerm(string chooseTermId)
         {
             var accountId = HttpContext.User.Claims.FirstOrDefault();
             if (accountId != null)
@@ -215,7 +287,12 @@ namespace UMS.Quiz.Web.Controllers
             Console.WriteLine($"===> chooseTermId: {chooseTermId}");
 
             // Gọi hàm cập nhật học phần cho tài khoản
-            var result = UpdateAccountWithTerm(int.Parse(accountId!.Value), chooseTermId);
+            var result = await UpdateAccountWithTermAsync(int.Parse(accountId!.Value), chooseTermId);
+
+            if (!result)
+            {
+                return Json(null);
+            }
 
             //if (result)
             //{

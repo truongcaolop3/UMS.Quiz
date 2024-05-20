@@ -26,7 +26,11 @@ namespace UMS.Quiz.DomainModels
         public float AllPoint { get; set; }
 
         public int ExamDetailCandidatesID { get; set; }
-        public ExamDetailCandidates? ExamDetailCandidates { get; set; } 
+        public ExamDetailCandidates? ExamDetailCandidates { get; set; }
+        /// <summary>
+        /// thuộc người dùng nào 
+        /// </summary>
+        public int AccountId { get; set; }
     }
 }
  

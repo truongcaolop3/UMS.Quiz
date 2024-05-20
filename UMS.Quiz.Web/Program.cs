@@ -2,9 +2,22 @@
 using Microsoft.EntityFrameworkCore;
 using UMS.Quiz.Web.Data;
 using System.Configuration;
+using UMS.Quiz.DomainModels;
+using static UMS.Quiz.DomainModels.Terms;
+using UMS.Quiz.Web.Codes;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//builder.Services.AddDbContext<ApplicationDBContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("defaultConnection")));
+
+//builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+//    .AddEntityFrameworkStores<ApplicationDBContext>();
+
+builder.Services.AddRazorPages();
 
 builder.Services.AddSession(options =>
 {
@@ -53,6 +66,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");

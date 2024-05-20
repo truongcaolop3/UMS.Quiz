@@ -27,5 +27,9 @@ namespace UMS.Quiz.DomainModels
         /// </summary>
         public ICollection<Knowledges> Knowledges { get; set; } = new List<Knowledges>(); // Mối quan hệ với Knowledges
 
+        /// <summary>
+        /// thuộc người dùng nào 
+        /// </summary>
+        public int AccountId { get; set; }
     }
 }

@@ -42,5 +42,10 @@ namespace UMS.Quiz.DomainModels
         public ICollection<Knowledges> Knowledges { get; set; } = new HashSet<Knowledges>();
         //public ICollection<ExamQuestion> ExamQuestions { get; set; } = new List<ExamQuestion>();
         public ICollection<ExamQuestions> ExamQuestions { get; set; } = new List<ExamQuestions>();
+
+        /// <summary>
+        /// thuộc người dùng nào 
+        /// </summary>
+        public int AccountId { get; set; }
     }
 }

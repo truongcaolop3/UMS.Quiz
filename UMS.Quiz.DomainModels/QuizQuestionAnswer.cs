@@ -38,6 +38,9 @@ namespace UMS.Quiz.DomainModels
         /// </summary>
         public QuestionDetail? QuestionDetail { get; set; }
 
-
+        /// <summary>
+        /// thuộc người dùng nào 
+        /// </summary>
+        public int AccountId { get; set; }
     }
 }

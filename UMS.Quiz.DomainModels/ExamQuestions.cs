@@ -32,7 +32,7 @@ namespace UMS.Quiz.DomainModels
         /// <summary>
         /// Loại câu hỏi
         /// </summary>
-        public string? QuestionType { get; set; }
+        public int QuestionType { get; set; }
         /// <summary>
         /// Câu hỏi
         /// </summary>
@@ -60,5 +60,10 @@ namespace UMS.Quiz.DomainModels
         public int? TopicTemplateID { get; set; }
         public TopicTemplate? TopicTemplate { get; set; }
         public ICollection<Exam> Exam { get; set; } = new List<Exam>();
+
+        /// <summary>
+        /// thuộc người dùng nào 
+        /// </summary>
+        public int AccountId { get; set; }
     }
 }

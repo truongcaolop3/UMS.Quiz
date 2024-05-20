@@ -24,11 +24,17 @@ namespace UMS.Quiz.DomainModels
         /// <summary>
         /// danh sách khối kiến thức of học phần
         /// </summary>
+        public int KnowledgeId { get; set; }
         public Knowledges? Knowledge { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        public QuestionDetail? QuestionDetail { get; set; }
+        public ICollection<QuestionDetail> questionDetails { get; set; } = new List<QuestionDetail>();
+
+        /// <summary>
+        /// thuộc người dùng nào 
+        /// </summary>
+        public int AccountId { get; set; }
 
     }
 }

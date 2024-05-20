@@ -131,6 +131,44 @@
         $(document).ready(function () {
             const keyStudyModuleId = "studyModuleId";
             const keyStudyModuleName = "studyModuleName";
+            const studyModuleTextLocal = localStorage.getItem(keyStudyModuleName);
+
+            // gọi ajax để lấy thông tin học phần từ database
+            $.ajax({
+                url: "/Home/GetCurrentTerm",
+                method: "POST",
+                success: function (data) {
+                    console.log('==> data: ', data);
+
+                    // nếu khác với local thì thay thế dữ liệu trong db với dữ liệu trong local
+                    if (data.termID !== localStorage.getItem(keyStudyModuleId)
+                        || data.termName !== localStorage.getItem(keyStudyModuleName)) {
+                        $('#dataStudyModule').text(data.termName);
+                        localStorage.setItem(keyStudyModuleId, data.termID);
+                        localStorage.setItem(keyStudyModuleName, data.termName);
+                    }
+
+                    // nếu không có trong csdl thì xoá ở local
+                    if (!data) {
+                        localStorage.removeItem(keyStudyModuleId);
+                        localStorage.removeItem(keyStudyModuleName);
+
+                        $('#formSelectModule').modal('show');
+                        $('#btn-close').hide();
+                    }
+                    // alert('Lấy ra học phần tác nghiệp thành công!');
+                },
+                error: function (err) {
+                    console.log('==> error: ', err);
+                    alert('Lấy ra học phần tác nghiệp thất bại!');
+                }
+            });
+
+            if (studyModuleTextLocal) {
+                $('#btn-close').show();
+                $('#dataStudyModule').text(studyModuleTextLocal);
+            }
+
             const choices = new Choices($("#selectStudyModule")[0], {
             }).setChoices(async () => {
                 try {
@@ -154,16 +192,6 @@
                 console.log('>>> value selected: ', $('#selectStudyModule').find(":selected").val());
                 console.log('>>> text selected: ', $('#selectStudyModule').find(":selected").text());
             });
-
-            const studyModuleTextLocal = localStorage.getItem(keyStudyModuleName);
-
-            if (studyModuleTextLocal) {
-                $('#btn-close').show();
-                $('#dataStudyModule').text(studyModuleTextLocal);
-            } else {
-                $('#formSelectModule').modal('show');
-                $('#btn-close').hide();
-            }
 
             $('#btnSubmitStudyModule').click(function () {
                 let studyModuleValue = $('#selectStudyModule').find(":selected").val();
@@ -198,6 +226,10 @@
                     },
                     success: function(data) {
                         console.log('==> data: ', data);
+                        if (!data) {
+                            alert('Có sự cố xảy ra khi chọn học phần tác nghiệp!');
+                            return;
+                        }
                         alert('Chọn học phần tác nghiệp thành công!');
                     },
                     error: function(err) {

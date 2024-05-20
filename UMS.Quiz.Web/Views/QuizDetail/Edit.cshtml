@@ -1,0 +1,156 @@
+﻿@using UMS.Quiz.Web.Constants;
+@model UMS.Quiz.DomainModels.QuestionDetail
+@{
+
+}
+<div class="box box-primary  shadow-lg p-3 mb-3 rounded">
+    <div class="box-body">
+        <form action="~/QuizDetail/Save" method="post">
+            @* <input type="hidden" id="_studyModuleId" name="@nameof(Model.TermID)" value="@Model.TermID" /> *@
+            <input type="hidden" name="@nameof(Model.QuestionDetailID)" value="@Model.QuestionDetailID" />
+            <input type="hidden" name="@nameof(Model.KnowledgeId)" value="@Model.KnowledgeId" />
+            <div class="container-fluid row p-0 pb-3 ">
+                <div class=" col-sm-2 ">
+
+                    <label for="recipient-name" class="col-form-label fs-5">Học phần:</label>
+                    <!-- UX "tồi" => Nên thay bằng radio hoặc checkbox -->
+                    <select class="form-control" name="category" id="categorySelect" disabled>
+                        <option id="_studyModuleName"></option>
+                        @Html.ValidationMessage(nameof(Model.knowledges.KnowledgeName), new { @style = "color:#f00" })
+                    </select>
+                </div>
+                <div class=" col-sm-2 ">
+                    <label for="recipient-name" class="col-form-label fs-5">Khối kiến thức:</label>
+                    <input id="inputKnowlege" name="@nameof(Model.KnowledgeId)" type="text" class="form-control"
+                           value="@Model.KnowledgeId" disabled>
+                </div>
+                <div class="col-sm-4 dropdown ">
+                    <label for="recipient-name" class="col-form-label fs-5">Kiểu câu hỏi:</label>
+                    <select class="form-control" id="mySelect" overflow-y: scroll; name="@nameof(Model.QuestionType)">
+                        @* <option selected="@(@Model.QuestionType == QuestionTypeConstant.DEFAULT)"
+                                value="@QuestionTypeConstant.DEFAULT">
+                            Chọn tất cả
+                        </option>*@
+                        <option selected="@(@Model.QuestionType == QuestionTypeConstant.CHOOSE_ONE_ANSWER)"
+                                value="@QuestionTypeConstant.CHOOSE_ONE_ANSWER">
+                            Câu hỏi chỉ chọn 1 trong số các đáp án
+                        </option>
+
+                        <option selected="@(@Model.QuestionType == QuestionTypeConstant.CHOOSE_MULTI_ANSWERS)"
+                                value="@QuestionTypeConstant.CHOOSE_MULTI_ANSWERS">
+                            Câu hỏi cho chọn nhiều đáp án trong số các đáp án
+                        </option>
+
+                        <option selected="@(@Model.QuestionType == QuestionTypeConstant.CHOOSE_TEXT_ANSWER)"
+                                value="@QuestionTypeConstant.CHOOSE_TEXT_ANSWER">
+                            Câu hỏi dạng điền từ(text) ngắn gọn
+                        </option>
+                    </select>
+                </div>
+
+                <div class=" col-sm-1 ">
+                    <label for="recipient-name" class="col-form-label fs-5">Điểm:</label>
+                    <input type="text" class="form-control" id="recipient-name" name="QuestionPoint" value="@Model.QuestionPoint" >
+                    @* <input type="text" class="form-control" id="recipient-name"> *@
+                    @Html.ValidationMessage(nameof(Model.QuestionPoint), new { @style = "color:#f00" }) 
+                </div>
+
+            </div>
+
+            <div id="ckeditor" class="">@Model.QuestionText</div>
+
+            <div class="row py-2 px-3">
+                <h5 class="px-0 pt-2">Câu trả lời và đáp án</h5>
+                <table class="table table-bordered " id="myTable">
+                    <thead>
+                        <tr class="bg-light">
+                            <th style="width:35px " class="p-1"></th>
+                            <th class="col-9">Nội dung câu trả lời</th>
+                            <th class="">Đáp án đúng</th>
+                            <th class="">Tỷ trọng điểm (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="myTableBody">
+                        <tr>
+                            <td style="width: 35px" class="p-1 text-center">
+                                <a id="addrow" href="javascript:void(0)" type="button" class="btn btn-light text-black add-row" style="padding: 1px 6px; font-size: 20px">
+                                    <i class="bi bi-plus-lg"></i>
+                                </a>
+                            </td>
+                            <td colspan="3">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="input-group pt-2 p-0 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-floppy-o"></i> Tạo mới và ở lại
+                    </button>
+
+                    @* <div class="input-group-btn mx-2">
+                        <a href="~/QuizDetail/Create" class="btn btn-primary">
+                            Tạo mới và ở lại
+                        </a>
+                    </div>
+                    <div class="input-group-btn mx-2">
+                        <a href="~/QuizDetail/Create" class="btn btn-primary">
+                            Tạo mới và quay về trang quản chi tiết câu hỏi
+                        </a>
+                    </div> *@
+                    <div class="input-group-btn ms-2">
+                        <a href="~/QuizDetail/Index" class="btn btn-light">
+                            Quay lại
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+@section Scripts {
+    <script type="text/javascript">
+
+
+        CKEDITOR.replace('ckeditor');
+
+        $(document).ready(function () {
+            // bắt sự kiện thêm dòng mới
+            $('#addrow').click(function () {
+                const itemRow = `<tr >
+                                    <td style="width:35px " class="p-1 ">
+                                        <a href="javascript:void(0)" class="btn btn-light text-black delete-row" style="padding: 5px 5px; font-size: 20px">
+                                        <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                        <td>nput type="text" class="form-control" placeholder="Nhập đáp án" aria-label="Answer_Text">
+                                        @* <input type="text" class="form-control" id="recipient-name"> *@
+                                     </td>
+                                    <td>
+                                        <select class="form-control">
+                                        <option value="0">Sai</option>
+                                        <option value="1">Đúng</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                    <input type="number" class="form-control" placeholder="Nhập trọng số điểm" aria-label="Last name">
+                                    </td>
+                                </tr>`;
+                // thêm trước icon +
+                $(itemRow).insertBefore('#myTableBody tr:last-child');
+
+                // bắt sự kiện xoá dòng
+                $('.delete-row').off('click').on('click', function (e) {
+                    e.preventDefault();
+                    const isDeleteRow = confirm('Bạn chắc chắn muốn xoá dòng này?');
+                    if (!isDeleteRow) {
+                        return;
+                    }
+                    $(this).closest('tr').remove();
+                });
+            });
+        });
+
+    </script>
+}

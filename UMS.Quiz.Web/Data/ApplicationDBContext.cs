@@ -1,16 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using UMS.Quiz.DomainModels;
+using UMS.Quiz.Web.Codes;
 
 namespace UMS.Quiz.Web.Data
 {
-    public class ApplicationDBContext :DbContext
+    public class ApplicationDBContext : DbContext /*IdentityDbContext<ApplicationUser>*/
     {
+       
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options)
         {
             Account = Set<Account>();
             Terms = Set<Terms>();
             Knowledges = Set<Knowledges>();
-            QuizQuestions = Set<QuizQuestion>();
+            //QuizQuestions = Set<QuizQuestion>();
             QuestionDetail = Set<QuestionDetail>();
             QuizQuestionAnswer = Set<QuizQuestionAnswer>();
             TopicTemplate = Set<TopicTemplate>();
@@ -26,10 +29,10 @@ namespace UMS.Quiz.Web.Data
             modelBuilder.Entity<Knowledges>()
             .Property(a => a.KnowledgeId)
             .ValueGeneratedOnAdd();
-            // Tự tăng ID của QuizQuestion
-            modelBuilder.Entity<QuizQuestion>()
-            .Property(a => a.QuizQuestionId)
-            .ValueGeneratedOnAdd();
+            //// Tự tăng ID của QuizQuestion
+            //modelBuilder.Entity<QuizQuestion>()
+            //.Property(a => a.QuizQuestionId)
+            //.ValueGeneratedOnAdd();
             // Tự tăng ID của QuizQuestion
             modelBuilder.Entity<QuestionDetail>()
             .Property(a => a.QuestionDetailID)
@@ -64,7 +67,7 @@ namespace UMS.Quiz.Web.Data
             //modelBuilder.Entity<QuizQuestionAnswer>().HasKey(q => q.AnswerID);
             modelBuilder.Entity<Terms>().HasKey(k => k.TermID);
             modelBuilder.Entity<Knowledges>().HasKey(k => k.KnowledgeId);
-            modelBuilder.Entity<QuizQuestion>().HasKey(q => q.QuizQuestionId);
+            //modelBuilder.Entity<QuizQuestion>().HasKey(q => q.QuizQuestionId);
             modelBuilder.Entity<QuestionDetail>().HasKey(q => q.QuestionDetailID);
             modelBuilder.Entity<QuizQuestionAnswer>().HasKey(q => q.QuizQuestionAnswerID);
             modelBuilder.Entity<TopicTemplate>().HasKey(t => t.TopicTemplateID);
@@ -78,11 +81,21 @@ namespace UMS.Quiz.Web.Data
                 .HasOne(k => k.Terms)
                 .WithMany(t => t.Knowledges)
                 .HasForeignKey(k => k.TermID);
-            // Mối quan hệ 1-1 giữa QuestionDetail và QuizQuestion
+            //// Mối quan hệ 1-1 giữa knowledges và QuizQuestion
+            //modelBuilder.Entity<Knowledges>()
+            //    .HasOne(qd => qd.QuizQuestion)
+            //    .WithOne(q => q.Knowledge)
+            //    .HasForeignKey<QuizQuestion>(qd => qd.KnowledgeId);
+            // Mối quan hệ 1-n giữa Knowledges và QuestionDetail
             modelBuilder.Entity<QuestionDetail>()
-                .HasOne(qd => qd.QuizQuestion)
-                .WithOne(q => q.QuestionDetail)
-                .HasForeignKey<QuestionDetail>(qd => qd.QuizQuestionId);
+                .HasOne(qd => qd.knowledges)
+                .WithMany(q => q.questionDetails)
+                .HasForeignKey(qd => qd.KnowledgeId);
+            //// Mối quan hệ 1-n giữa QuizQuestion và QuestionDetail
+            //modelBuilder.Entity<QuestionDetail>()
+            //    .HasOne(qd => qd.knowledges)
+            //    .WithMany(q => q.questionDetails)
+            //    .HasForeignKey(qd => qd.KnowledgeId);
 
             // Mối quan hệ 1-n giữa QuestionDetail và QuizQuestionAnswer
             modelBuilder.Entity<QuestionDetail>()
@@ -128,14 +141,14 @@ namespace UMS.Quiz.Web.Data
                 .HasForeignKey(t => t.ExamDetailCandidatesID);
         }
 
-        internal static T GetSessionData<T>(object cUSTOMER_SEARCH)
-        {
-            throw new NotImplementedException();
-        }
+        //internal static T GetSessionData<T>(object cUSTOMER_SEARCH)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public DbSet<Terms> Terms { get; set; }
         public DbSet<Knowledges> Knowledges { get; set; }
-        public DbSet<QuizQuestion> QuizQuestions { get; set; }
+        //public DbSet<QuizQuestion> QuizQuestions { get; set; }
         public DbSet<QuestionDetail> QuestionDetail { get; set; }
         public DbSet<QuizQuestionAnswer> QuizQuestionAnswer { get; set;}
         public DbSet<TopicTemplate> TopicTemplate { get; set; }

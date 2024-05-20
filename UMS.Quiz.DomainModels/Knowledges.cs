@@ -31,5 +31,13 @@ namespace UMS.Quiz.DomainModels
         /// </summary>
         public int? TopicTemplateID { get; set; }
         public TopicTemplate? TopicTemplate { get; set; }
+
+        //public QuizQuestion? QuizQuestion { get; set; }
+
+        /// <summary>
+        /// thuộc người dùng nào 
+        /// </summary>
+        public int AccountId { get; set; }
+        public ICollection<QuestionDetail> questionDetails { get; set; } = new List<QuestionDetail>();
     }
 }

@@ -22,7 +22,7 @@ namespace UMS.Quiz.BusinessLayers
         private static readonly ICommonDAL<Knowledges> KnowledgesDB;
         //private static readonly ICommonDAL<QuizQuestion> QuizQuestionDB;
         private static readonly IQuestionDetailDAL QuestionDetailDB;
-        private static readonly ICommonDAL<QuizQuestionAnswer> QuizQuestionAnswerDB;
+        private static readonly IQuizQuestionAnswerDAL QuizQuestionAnswerDB;
         private static readonly ICommonDAL<TopicTemplate> TopicTemplateDB;
         private static readonly ICommonDAL<Account> AccountDB;
         private static readonly ICommonDAL<Terms> TermDB;
@@ -238,6 +238,12 @@ namespace UMS.Quiz.BusinessLayers
             rowCount = QuizQuestionAnswerDB.Count(searchValue);
             return QuizQuestionAnswerDB.List(page, pageSize, searchValue).ToList();
         }
+
+        public static IList<QuizQuestionAnswer> GetQuizQuestionAnswerByQuestionDetailId(int questionDetailId)
+        {
+            return QuizQuestionAnswerDB.GetQuizQuestionAnswerByQuestionDetailId(questionDetailId);
+        }
+
         /// <summary>
         /// Lấy thông tin của một khối kiến thức theo mã học phần
         /// </summary>

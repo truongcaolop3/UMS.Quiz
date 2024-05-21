@@ -41,7 +41,7 @@ namespace UMS.Quiz.DomainModels
         //public ICollection<QuizQuestion> quizQuestions { get; set; } = new List<QuizQuestion>();
         //public int? QuizQuestionId { get; set; }
         //public QuizQuestion? quizQuestion { get; set; }
-        public int? KnowledgeId { get; set; }
+        public int KnowledgeId { get; set; }
         public Knowledges? knowledges { get; set; }
 
         public ICollection<QuizQuestionAnswer> QuizQuestionAnswers { get; set; } = new List<QuizQuestionAnswer>();

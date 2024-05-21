@@ -46,6 +46,8 @@ namespace UMS.Quiz.Web.Models
     public class QuestionDetailSearchResult : BasePaginationResult
     {
         public List<QuestionDetail> Data { get; set; } = new List<QuestionDetail>();
+        public int KnowledgeId { get; set; }
+        public string? KnowledgeName { get; set; }
 
     }
     /// <summary>

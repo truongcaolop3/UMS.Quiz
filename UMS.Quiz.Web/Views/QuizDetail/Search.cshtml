@@ -5,7 +5,7 @@
 }
 <div>
     <p style="margin:10px 0 10px 0">
-        Có <strong>@Model.RowCount</strong> khối kiến thức trong tổng số <strong>@Model.PageCount</strong> trang
+        Có <strong>@Model.RowCount</strong> Câu hỏi trắc nghiệm @* <strong>@Model.PageCount</strong> trang *@
     </p>
     @if (Model.Data.Count == 0)
     {
@@ -21,55 +21,79 @@
                     <th style="width:230px" class="text-start">Kiểu câu hỏi</th>
                     <th style="width:55px" class="text-center">Điểm:</th>
                     <th style="width:110px" class="text-center">
-                        <a href="~/QuizDetail/Create" class="btn btn-success" style="padding: 1px 6px; font-size: 20px">
+                        <a href="~/QuizDetail/Create?knowledgeId=@Model.KnowledgeId" class="btn btn-success" style="padding: 1px 6px; font-size: 20px">
                             <i class="bi bi-plus-lg"></i>
                         </a>
                     </th>
                 </tr>
             </thead>
             <tbody>
+                @{
+                    int oldQuestionDetailId = 0;
+                    int showIndex = 0;
+                    int orderAnswer = 0;
+                    char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+                }
                 @for (var index = 0; index < Model.Data.Count; index++)
                 {
                     var item = Model.Data[index];
+
+                    var countAnswersInQuestion = Model.Data.Where(q => q.QuestionDetailID == item.QuestionDetailID).ToList().Count;
+
+                    showIndex = oldQuestionDetailId != item.QuestionDetailID ? showIndex + 1 : showIndex;
                     <tr>
-                        <td>@(index + 1)</td>
-                        <td>
+                        @if (oldQuestionDetailId != item.QuestionDetailID)
+                        {
+                            <td rowspan="@(oldQuestionDetailId != item.QuestionDetailID ? countAnswersInQuestion : "")">
+                                @(oldQuestionDetailId != item.QuestionDetailID ? @showIndex : "")
+                            </td>
+                        }
+                        <td >
                             <div class="d-flex flex-column col-xl-10 text-start">
-                                <p class="mb-3 text-sm fw-bold">@item.QuestionText</p>
+                                @if (oldQuestionDetailId != item.QuestionDetailID)
+                                {
+                                    <p class="mb-3 text-sm fw-bold questionText">@item.QuestionText</p>
+                                    orderAnswer = 0;
+                                }
+                                else
+                                {
+                                    orderAnswer++;
+                                }
                                 <div class="pt-1 px-3 pb-2">
-                                    @* Hiển thị các đáp án của câu hỏi *@
-                                    <div class="d-flex align-items-center">
-                                        <p class="text-lg-start">a. <span class="text-xs">Đáp án a</span></p>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <p class="text-lg-start">b. <span class="text-xs">Đáp án b</span></p>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <p class="text-lg-start">c. <span class="text-xs">Đáp án c</span></p>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <p class="text-lg-start">d. <span class="text-xs">Đáp án d</span></p>
-                                    </div>
+                                    @foreach (var answer in item.QuizQuestionAnswers)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <p id="@answer.AnswerText" class="text-lg-start @(answer.IsCorrect ? "text-primary text-bold" : "")">
+                                                @alpha[orderAnswer]. <span class="text-xs">@answer.AnswerText</span>
+                                            </p>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </td>
-                        <td>@item.QuestionType</td>
-                        <td>@item.QuestionPoint</td>
-                        <td class="text-center">
-                            <a href="~/QuizDetail/Edit/@item.QuestionDetailID" class="btn btn-xs btn-info">
-                                <i class="bi bi-pencil-fill"></i>
-                            </a>
-                            <a href="~/QuizDetail/Delete" class="btn btn-xs btn-danger delete-quiz">
-                                <i class="bi bi-x-circle-fill"></i>
-                            </a>
-                        </td>
+
+                        @if (oldQuestionDetailId != item.QuestionDetailID)
+                        {
+                            <td rowspan="@countAnswersInQuestion">@item.QuestionType</td>
+                            <td rowspan="@countAnswersInQuestion">@item.QuestionPoint</td>
+                            <td rowspan="@countAnswersInQuestion" class="text-center">
+                                <a href="~/QuizDetail/Edit/@item.QuestionDetailID" class="btn btn-xs btn-info">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+                                <a href="~/QuizDetail/Delete/@item.QuestionDetailID" class="btn btn-xs btn-danger">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                </a>
+                            </td>
+
+                            oldQuestionDetailId = item.QuestionDetailID;
+                        }
                     </tr>
                 }
             </tbody>
         </table>
     </div>
     <!-- Phân trang -->
-    <div class="box-footer text-center">
+    @* <div class="box-footer text-center">
         <ul class="pagination d-flex justify-content-center">
             @for (int i = 1; i <= Model.PageCount; i++)
             {
@@ -83,5 +107,5 @@
                 }
             }
         </ul>
-    </div>
+    </div> *@
 </div>

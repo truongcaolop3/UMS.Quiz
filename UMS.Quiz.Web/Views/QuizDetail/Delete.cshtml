@@ -2,17 +2,13 @@
 @using UMS.Quiz.Web.Constants;
 @using UMS.Quiz.Web.Models;
 @using Newtonsoft;
-@model UMS.Quiz.Web.Models.SaveQuizQuestionDetailViewModel
+@model UMS.Quiz.DomainModels.QuestionDetail
 @{
     string errMsgKey = "ErrorMessage";
 }
-<div class="box box-primary  shadow-lg p-3 mb-3 rounded">
+<div class="box box-primary shadow-lg p-3 mb-3 rounded">
     <div class="box-body">
-        @if (ViewData.ModelState.ContainsKey(errMsgKey))
-        {
-            <div class="alert alert-danger">@ViewData.ModelState[errMsgKey]!.Errors[0].ErrorMessage</div>
-        }
-        <form id="questionForm" action="~/QuizDetail/Save" method="post">
+        <form action="~/QuizDetail/Delete/@Model.QuestionDetailID" method="post">
             @* <input type="hidden" id="_studyModuleId" name="@nameof(Model.TermID)" value="@Model.TermID" /> *@
             <input id="@nameof(Model.QuestionDetailID)" type="hidden" name="@nameof(Model.QuestionDetailID)" value="@Model.QuestionDetailID" />
             <input id="@nameof(Model.KnowledgeId)" type="hidden" name="@nameof(Model.KnowledgeId)" value="@Model.KnowledgeId" />
@@ -34,8 +30,8 @@
                     <label for="recipient-name" class="col-form-label fs-5">Kiểu câu hỏi:</label>
                     <select class="form-control" id="@nameof(Model.QuestionType)" overflow-y: scroll; name="@nameof(Model.QuestionType)">
                         @* <option selected="@(@Model.QuestionType == QuestionTypeConstant.DEFAULT)"
-                                value="@QuestionTypeConstant.DEFAULT">
-                            Chọn tất cả
+                        value="@QuestionTypeConstant.DEFAULT">
+                        Chọn tất cả
                         </option>*@
                         <option selected="@(@Model.QuestionType == QuestionTypeConstant.CHOOSE_ONE_ANSWER)"
                                 value="@QuestionTypeConstant.CHOOSE_ONE_ANSWER">
@@ -57,19 +53,19 @@
                     <label for="recipient-name" class="col-form-label fs-5">Điểm:</label>
                     <input type="text" class="form-control" id="@nameof(Model.QuestionPoint)" name="@nameof(Model.QuestionPoint)" value="@Model.QuestionPoint">
                     @* <input type="text" class="form-control" id="recipient-name"> *@
-                    @Html.ValidationMessage(nameof(Model.QuestionPoint), new { @style = "color:#f00" }) 
+                    @Html.ValidationMessage(nameof(Model.QuestionPoint), new { @style = "color:#f00" })
                 </div>
             </div>
 
             @* ckEditor *@
             <textarea id="@nameof(Model.QuestionText)" name="@nameof(Model.QuestionText)">@Model.QuestionText</textarea>
 
-            <input id="@nameof(Model.QuizQuestionAnswers)" name="@nameof(Model.QuizQuestionAnswers)" type="hidden" 
-                value="@JsonConvert.SerializeObject(Model.QuizQuestionAnswers)" />
-            <input id="@nameof(Model.QuizQuestionAnswersStr)" name="@nameof(Model.QuizQuestionAnswersStr)" type="hidden"
+            <input id="@nameof(Model.QuizQuestionAnswers)" name="@nameof(Model.QuizQuestionAnswers)" type="hidden"
                    value="@JsonConvert.SerializeObject(Model.QuizQuestionAnswers)" />
-
-            <div class="row py-2 px-3"> 
+            @* <input id="@nameof(Model.QuizQuestionAnswersStr)" name="@nameof(Model.QuizQuestionAnswersStr)" type="hidden"
+                   value="@JsonConvert.SerializeObject(Model.QuizQuestionAnswers)" />
+ *@
+            <div class="row py-2 px-3">
                 <h5 class="px-0 pt-2">Câu trả lời và đáp án</h5>
                 <table class="table table-bordered " id="myTable">
                     <thead>
@@ -90,20 +86,20 @@
                             <td colspan="3">
                             </td>
                         </tr>
-                        @foreach(var answer in Model.QuizQuestionAnswers)
+                        @foreach (var answer in Model.QuizQuestionAnswers)
                         {
                             <tr class="answerItem">
                                 <input class="quizQuestionAnswerID" type="hidden" value="@answer.QuizQuestionAnswerID" />
                                 <td style="width:35px" class="p-1 ">
                                     <a href="javascript:void(0)" class="btn btn-light text-black delete-row" data-quizQuestionAnswerID="@answer.QuizQuestionAnswerID"
-                                    style="padding: 5px 5px; font-size: 20px">
+                                       style="padding: 5px 5px; font-size: 20px">
                                         <i class="bi bi-trash"></i>
                                     </a>
                                 </td>
                                 <td>
                                     <input type="text" name="@nameof(answer.AnswerText)" class="form-control answerText" placeholder="Nhập đáp án"
                                            aria-label="Answer_Text"
-                                        value="@answer.AnswerText">
+                                           value="@answer.AnswerText">
                                 </td>
                                 <td>
                                     <select class="form-control isCorrect" name="IsCorrect">
@@ -114,17 +110,17 @@
                                 <td>
                                     <input type="number" name="@nameof(answer.PercenterValue)" class="form-control percenterValue" placeholder="Nhập trọng số điểm"
                                            aria-label="PercenterValue"
-                                        value="@answer.PercenterValue">
+                                           value="@answer.PercenterValue">
                                 </td>
                                 <input class="questionDetailID" type="hidden" value="@answer.QuestionDetailId" />
                                 <input class="accountId" type="hidden" value="@Model.AccountId" />
-                            </tr>                            
+                            </tr>
                         }
                     </tbody>
                 </table>
                 <div class="input-group pt-2 p-0 d-flex justify-content-end">
                     <button id="btnSaveAndHere" type="submit" class="btn btn-primary">
-                        <i class="fa fa-floppy-o"></i> Tạo mới và ở lại
+                        <i class="fa fa-floppy-o"></i> Lưu dữ liệu
                     </button>
                     <div class="input-group-btn ms-2">
                         <a href="~/QuizDetail/Index?knowledgeId=@Model.KnowledgeId" class="btn btn-light">
@@ -134,15 +130,13 @@
                 </div>
             </div>
         </form>
-
     </div>
-
 </div>
 @section Scripts {
     <script type="text/javascript">
 
 
-        var editor =  CKEDITOR.replace('QuestionText', {
+        var editor = CKEDITOR.replace('QuestionText', {
             // Vô hiệu hóa dịch vụ đám mây nếu bạn không sử dụng chúng
             removePlugins: 'easyimage,cloudservices',
         });
@@ -154,51 +148,72 @@
 
         $(document).ready(function () {
             // bắt sự kiện thêm dòng mới
-            $('#addrow').click(function () {
-                const itemRow = `<tr class="answerItem">
-                                    <input class="quizQuestionAnswerID" type="hidden" value="0" />
-                                    <td style="width:35px " class="p-1 ">
-                                        <a href="javascript:void(0)" class="btn btn-light text-black delete-row" data-quizQuestionAnswerID="" 
-                                        style="padding: 5px 5px; font-size: 20px">
-                                        <i class="bi bi-trash"></i>
-                                        </a>
-                                    </td>
-                                    <td><input type="text" name="AnswerText" class="form-control answerText" placeholder="Nhập đáp án" aria-label="Answer_Text">
-                                     </td>
-                                    <td>
-                                        <select class="form-control isCorrect" name="IsCorrect">
-                                            <option value="0">Sai</option>
-                                            <option value="1">Đúng</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <input type="number" name="PercenterValue" class="form-control percenterValue" placeholder="Nhập trọng số điểm" aria-label="PercenterValue">
-                                    </td>
-                                    <input class="questionDetailID" type="hidden" value="0" />
-                                    <input class="accountId" type="hidden" value="0" />
-                                </tr>`;
-                // thêm trước icon +
-                const questionDetailID = $('#QuestionDetailID').val();
-                if (questionDetailID == 0) {
-                    $(itemRow).insertBefore('#myTableBody tr:last-child');
-                } else {
-                    $('#myTableBody').append(itemRow);
-                }
+            // $('#addrow').click(function () {
+            //     const itemRow = `<tr class="answerItem">
+            //                                 <input class="quizQuestionAnswerID" type="hidden" value="0" />
+            //                                 <td style="width:35px " class="p-1 ">
+            //                                     <a href="javascript:void(0)" class="btn btn-light text-black delete-row" data-quizQuestionAnswerID=""
+            //                                     style="padding: 5px 5px; font-size: 20px">
+            //                                     <i class="bi bi-trash"></i>
+            //                                     </a>
+            //                                 </td>
+            //                                 <td><input type="text" name="AnswerText" class="form-control answerText" placeholder="Nhập đáp án" aria-label="Answer_Text">
+            //                                  </td>
+            //                                 <td>
+            //                                     <select class="form-control isCorrect" name="IsCorrect">
+            //                                         <option value="0">Sai</option>
+            //                                         <option value="1">Đúng</option>
+            //                                     </select>
+            //                                 </td>
+            //                                 <td>
+            //                                     <input type="number" name="PercenterValue" class="form-control percenterValue" placeholder="Nhập trọng số điểm" aria-label="PercenterValue">
+            //                                 </td>
+            //                                 <input class="questionDetailID" type="hidden" value="0" />
+            //                                 <input class="accountId" type="hidden" value="0" />
+            //                             </tr>`;
+            //     // thêm trước icon +
+            //     const questionDetailID = $('#QuestionDetailID').val();
+            //     if (questionDetailID == 0) {
+            //         $(itemRow).insertBefore('#myTableBody tr:last-child');
+            //     } else {
+            //         $('#myTableBody').append(itemRow);
+            //     }
 
-               
-            });
+            //     // // bắt sự kiện xoá dòng
+            //     // $('.delete-row').off('click').on('click', function (e) {
+            //     //     e.preventDefault();
+            //     //     const isDeleteRow = confirm('Bạn chắc chắn muốn xoá dòng này?');
+            //     //     if (!isDeleteRow) {
+            //     //         return;
+            //     //     }
+            //     //     $(this).closest('tr').remove();
+            //     // });
+            // });
 
-           
+            // // bắt sự kiện xoá dòng
+            // $('.delete-row').off('click').on('click', function (e) {
+            //     e.preventDefault();
+            //     const isDeleteRow = confirm('Bạn chắc chắn muốn xoá dòng này?');
+            //     if (!isDeleteRow) {
+            //         return;
+            //     }
+            //     $(this).closest('tr').remove();
+
+            //     const quizQuestionAnswerID = $(this).attr('data-quizQuestionAnswerID');
+            //     if (quizQuestionAnswerID) {
+            //         alert(`Gọi api xoá câu trả lời với mã ${quizQuestionAnswerID}`)
+            //     }
+            // });
 
             // xử lý tạo mới và ở lại
-            $('#btnSaveAndHere').click(function (e) { 
+            $('#btnSaveAndHere').click(function (e) {
                 e.preventDefault();
 
                 let quizQuestionAnswers = [];
 
                 const answerItems = $('.answerItem').map(function (i, e) {
                     const answerText = $(this).find('.answerText').val();
-                    const isCorrect = +($(this).find('.isCorrect').val()) == 0 ? false: true;
+                    const isCorrect = +($(this).find('.isCorrect').val()) == 0 ? false : true;
                     const percenterValue = +($(this).find('.percenterValue').val());
                     const questionDetailID = +($(this).find('.questionDetailID').val());
                     const accountId = +($(this).find('.accountId').val());
@@ -236,7 +251,7 @@
 
                 // gọi ajax
                 $.ajax({
-                    url: "/QuizDetail/Save",
+                    url: "/QuizDetail/Delete",
                     method: "POST",
                     data: dataDto,
                     success: function (data) {
@@ -265,7 +280,3 @@
 
     </script>
 }
-@* 
- // @Html.ValidationMessage(nameof(Model.AnswerText), new { @style = "color:#f00" })
-                                        // @Html.ValidationMessage(nameof(Model.IsCorrect), new { @style = "color:#f00" })
-                                        // @Html.ValidationMessage(nameof(Model.PercenterValue), new { @style = "color:#f00" }) *@ 

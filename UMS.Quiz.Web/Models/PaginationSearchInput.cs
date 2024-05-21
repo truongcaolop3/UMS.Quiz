@@ -19,5 +19,7 @@ namespace UMS.Quiz.Web.Models
     {
         public int QuestionType { get; set; } = QuestionTypeConstant.DEFAULT;
         public int KnowledgeId { get; set; }
+        public string? KnowledgeName { get; set; }
+
     }
 }

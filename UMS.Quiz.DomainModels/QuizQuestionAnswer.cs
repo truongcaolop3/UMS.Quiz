@@ -24,7 +24,7 @@ namespace UMS.Quiz.DomainModels
         /// <summary>
         /// 
         /// </summary>
-        public bool? IsCorrect { get; set; }
+        public bool IsCorrect { get; set; }
         /// <summary>
         /// 
         /// </summary>

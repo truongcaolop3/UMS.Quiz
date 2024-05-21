@@ -9,7 +9,7 @@ using UMS.Quiz.DomainModels;
 
 namespace UMS.Quiz.DataLayers.SQLServer
 {
-    public class QuizQuestionAnswerDAL : _BaseDAL, ICommonDAL<QuizQuestionAnswer>
+    public class QuizQuestionAnswerDAL : _BaseDAL, IQuizQuestionAnswerDAL
     {
         public QuizQuestionAnswerDAL(string connectionString) : base(connectionString)
         {
@@ -19,14 +19,16 @@ namespace UMS.Quiz.DataLayers.SQLServer
             int id = 0;
             using (var connection = OpenConnection())
             {
-                var sql = @"insert into QuizQuestionAnswer(AnswerText,IsCorrect,PercenterValue)
-                            values(@AnswerText,@IsCorrect,@PercenterValue,);
+                var sql = @"insert into QuizQuestionAnswer(AnswerText,IsCorrect,PercenterValue,QuestionDetailId,AccountId)
+                            values(@AnswerText,@IsCorrect,@PercenterValue,@QuestionDetailId,@AccountId);
                             select @@identity;";
                 var parameters = new
                 {
                     AnswerText = data.AnswerText,
                     IsCorrect = data.IsCorrect,
-                    PercenterValue = data.PercenterValue
+                    PercenterValue = data.PercenterValue,
+                    QuestionDetailId = data.QuestionDetailId,
+                    AccountId = data.AccountId,
                 };
                 id = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
                 connection.Close();
@@ -79,7 +81,7 @@ namespace UMS.Quiz.DataLayers.SQLServer
             QuizQuestionAnswer? data = null;
             using (var connection = OpenConnection())
             {
-                var sql = @"select from QuizQuestionAnswer where QuizQuestionAnswerID = @QuizQuestionAnswerID";
+                var sql = @"select * from QuizQuestionAnswer where QuizQuestionAnswerID = @QuizQuestionAnswerID";
                 var parameters = new { QuizQuestionAnswerID = id };
                 data = connection.QueryFirstOrDefault<QuizQuestionAnswer>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
                 connection.Close();
@@ -90,6 +92,18 @@ namespace UMS.Quiz.DataLayers.SQLServer
         public QuizQuestionAnswer? Get(string id)
         {
             throw new NotImplementedException();
+        }
+
+        public IList<QuizQuestionAnswer> GetQuizQuestionAnswerByQuestionDetailId(int questionDetailId)
+        {
+            using (var connection = OpenConnection())
+            {
+                var sql = @"SELECT * FROM QuizQuestionAnswer WHERE QuestionDetailId = @QuestionDetailId";
+                var parameters = new { QuestionDetailId = questionDetailId };
+                var data = connection.Query<QuizQuestionAnswer>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text).ToList();
+
+                return data;
+            }
         }
 
         public bool IsUsed(int id)
@@ -175,12 +189,17 @@ namespace UMS.Quiz.DataLayers.SQLServer
                            set AnswerText = @AnswerText,
                                 IsCorrect = @IsCorrect,
                                 PercenterValue = @PercenterValue,
+                                QuestionDetailId = @QuestionDetailId,
+                                AccountId = @AccountId
                             where QuizQuestionAnswerID = @QuizQuestionAnswerID";
                 var parameters = new
                 {
                     AnswerText = data.AnswerText ?? "",
                     IsCorrect = data.IsCorrect,
                     PercenterValue = data.PercenterValue,
+                    QuestionDetailId = data.QuestionDetailId,
+                    AccountId = data.AccountId,
+                    QuizQuestionAnswerID = data.QuizQuestionAnswerID,
                 };
                 result = connection.Execute(sql: sql, param: parameters, commandType: System.Data.CommandType.Text) > 0;
                 connection.Close();

@@ -72,6 +72,30 @@
 
 @section scripts {
     <script>
+        // sử dụng chắc năng xóa
+        $(document).ready(function () {
+            $('body').on('click', '.btn-delete', function (e) {
+                e.preventDefault();
+                var url = $(this).attr('href');
+                if (confirm('Bạn có muốn xóa câu hỏi trắc nghiệm này?')) {
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        success: function (response) {
+                            if (response.success) {
+                                alert('Xóa thành công');
+                                location.reload(); // Tải lại trang sau khi xóa thành công
+                            } else {
+                                alert('Xóa thất bại');
+                            }
+                        },
+                        error: function () {
+                            alert('Xóa thất bại');
+                        }
+                    });
+                }
+            });
+        });
         $(document).ready(function () {
             $("#formSearch").submit(function (e) {
                 e.preventDefault();

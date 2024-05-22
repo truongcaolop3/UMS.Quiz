@@ -211,9 +211,8 @@ namespace UMS.Quiz.BusinessLayers
         /// <returns></returns>
         public static bool DeleteQuestionDetail(int id)
         {
-            if (QuestionDetailDB.IsUsed(id))
-                return false;
-            return QuestionDetailDB.Delete(id);
+            
+            return QuestionDetailDB.IsUsed(id) && QuestionDetailDB.Delete(id);
         }
         /// <summary>
         /// Kiểm tra xem khối kiến thức có mã id hiện có dữ liệu liên quan hay không?

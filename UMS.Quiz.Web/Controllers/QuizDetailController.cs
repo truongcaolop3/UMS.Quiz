@@ -247,17 +247,8 @@ namespace UMS.Quiz.Web.Controllers
         }
         public IActionResult Delete(int id = 0)
         {
-            Console.WriteLine(id);
-            ViewBag.Title = "Xóa câu hỏi trắc nghiệm";
-            if (Request.Method == "POST")
-            {
-                bool result = CommonDataService.DeleteQuestionDetail(id);
-                return RedirectToAction("Index");
-            }
-            var model = CommonDataService.GetQuestionDetail(id);
-            if (model == null)
-                return RedirectToAction("Index");
-            return View(model);
+            bool result = CommonDataService.DeleteQuestionDetail(id);
+            return Json(new { success = result });
         }
     }
 }

@@ -33,7 +33,17 @@ namespace UMS.Quiz.DomainModels
         /// số câu hỏi cần lấy của một khối kiến thức đưa vào cấu trúc bộ đề 
         /// </summary>
         public int QuantityGet { get; set; }
-        
+        /// <summary>
+        /// tất cả câu hỏi cần lấy
+        /// </summary>
+        public int AllQuantityGet { get; set; }
+        /// <summary>
+        /// Tất cả câu hỏi cần lấy
+        /// </summary>
+        public int GetAllQuantityGet()
+        {
+            return QuantityGet + QuantityGet;
+        }
         public ICollection<QuestionDetail> questionDetails { get; set; } = new List<QuestionDetail>();
 
         /// <summary>

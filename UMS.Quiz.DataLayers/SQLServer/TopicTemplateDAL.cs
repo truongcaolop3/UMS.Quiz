@@ -20,8 +20,8 @@ namespace UMS.Quiz.DataLayers.SQLServer
             int id = 0;
             using (var connection = OpenConnection())
             {
-                var sql = @"insert into TopicTemplate(TopicTemplateName,ExamTime,PointGet,QuantityGet)
-                            values(@TopicTemplateName,@ExamTime,@PointGet,QuantityGet);
+                var sql = @"insert into TopicTemplate(TopicTemplateName,ExamTime,PointGet,QuantityGet,All,AllQuantityGet)
+                            values(@TopicTemplateName,@ExamTime,@PointGet,@QuantityGet,@AllQuantityGet);
                             select @@identity;";
                 var parameters = new
                 {
@@ -29,6 +29,7 @@ namespace UMS.Quiz.DataLayers.SQLServer
                     ExamTime = data.ExamTime,
                     PointGet = data.PointGet,
                     QuantityGet = data.QuantityGet,
+                    AllQuantityGet = data.AllQuantityGet,
                 };
                 id = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
                 connection.Close();
@@ -49,7 +50,8 @@ namespace UMS.Quiz.DataLayers.SQLServer
                     (TopicTemplateName LIKE '%' + @TopicTemplateName + '%') OR 
                     (ExamTime = @ExamTime) OR 
                     (PointGet = @PointGet) OR 
-                    (QuantityGet = @QuantityGet)";
+                    (QuantityGet = @QuantityGet) OR 
+                    (AllQuantityGet = @AllQuantityGet)";
                 var parameters = new
                 {
                     searchValue = searchValue ?? "",
@@ -58,11 +60,33 @@ namespace UMS.Quiz.DataLayers.SQLServer
                 connection.Close();
             }
             return count;
+
         }
 
         public int Count(string searchValue = "", string termID = "", int AccountId = 0)
         {
-            throw new NotImplementedException();
+            int count = 0;
+            if (!string.IsNullOrEmpty(searchValue))
+                searchValue = "%" + searchValue + "%";
+            using (var connection = OpenConnection())
+            {
+                var sql = @"SELECT COUNT(*) FROM TopicTemplate 
+                            WHERE 
+                            (@searchValue IS NULL OR @searchValue = '') OR 
+                            (TopicTemplateName LIKE '%' + @TopicTemplateName + '%') OR 
+                            (ExamTime = @ExamTime) OR 
+                            (PointGet = @PointGet) OR 
+                            (QuantityGet = @QuantityGet) OR 
+                            (AllQuantityGet = @AllQuantityGet)";
+                var parameters = new
+                {
+                    searchValue = searchValue ?? "",
+                    TermId = termID,
+                    AccountId = AccountId
+                };
+                count = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
+            }
+            return count;
         }
 
         public bool Delete(int id)
@@ -168,14 +192,41 @@ namespace UMS.Quiz.DataLayers.SQLServer
             return data;
         }
 
-        public IList<TopicTemplate> List(int page = 1, int pageSize = 0, string searchValue = "", string termId = "")
-        {
-            throw new NotImplementedException();
-        }
-
+      
         public IList<TopicTemplate> List(int page = 1, int pageSize = 0, string searchValue = "", string termId = "", int AccountId = 0)
         {
-            throw new NotImplementedException();
+            List<TopicTemplate> data = new List<TopicTemplate>();
+            if (!string.IsNullOrEmpty(searchValue))
+                searchValue = "%" + searchValue + "%";
+
+            using (var connection = OpenConnection())
+            {
+                var sql = @";with cte as
+                    (
+                        select	*, row_number() over (order by TopicTemplateName) as RowNumber
+                        from	Knowledges
+                        where	((@searchValue = N'') or (TopicTemplateName like @searchValue)) 
+                                and (@termId = N'' or TermID = @termId)
+                                and (@AccountId = N'' or AccountId = @AccountId)
+                    )
+                    select * from cte
+                    where  (@pageSize = 0) 
+                        or (RowNumber between (@page - 1) * @pageSize + 1 and @page * @pageSize)
+                    order by RowNumber";
+
+                var parameters = new
+                {
+                    page = page,
+                    pageSize = pageSize,
+                    searchValue = searchValue ?? "",
+                    termId = termId ?? "",
+                    AccountId = AccountId
+                };
+
+                data = connection.Query<TopicTemplate>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text).ToList();
+                connection.Close();
+            }
+            return data;
         }
 
         public bool Update(TopicTemplate data)

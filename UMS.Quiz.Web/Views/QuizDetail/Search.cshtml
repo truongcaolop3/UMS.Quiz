@@ -80,11 +80,10 @@
                                 <a href="~/QuizDetail/Edit/@item.QuestionDetailID" class="btn btn-xs btn-info">
                                     <i class="bi bi-pencil-fill"></i>
                                 </a>
-                                <a href="~/QuizDetail/Delete/@item.QuestionDetailID" class="btn btn-xs btn-danger">
+                                <a href="~/QuizDetail/Delete/@item.QuestionDetailID" class="btn btn-xs btn-danger btn-delete">
                                     <i class="bi bi-x-circle-fill"></i>
                                 </a>
                             </td>
-
                             oldQuestionDetailId = item.QuestionDetailID;
                         }
                     </tr>
@@ -109,3 +108,9 @@
         </ul>
     </div> *@
 </div>
+
+@section scripts {
+    <script>
+    
+</script>
+}

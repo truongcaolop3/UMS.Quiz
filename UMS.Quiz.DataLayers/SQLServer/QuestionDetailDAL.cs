@@ -108,24 +108,44 @@ namespace UMS.Quiz.DataLayers.SQLServer
         }
         public bool Delete(int id)
         {
+            //bool result = false;
+            //using (var connection = OpenConnection())
+            //{
+            //    var sql = @"DELETE FROM QuestionDetail
+            //                FROM QuizQuestionAnswer qa
+            //                INNER JOIN QuestionDetail AS qd ON qd.QuestionDetailID = qa.QuestionDetailId
+            //                WHERE qd.QuestionDetailID = @QuestionDetailID
+            //                GO
+            //                SELECT qd.QuestionDetailID, qd.QuestionText, qa.QuizQuestionAnswerID, qa.AnswerText, qd.AccountId
+            //                FROM QuestionDetail qd
+            //                INNER JOIN QuizQuestionAnswer qa ON qa.QuestionDetailId = qd.QuestionDetailID
+            //                WHERE qd.QuestionDetailID = @QuestionDetailID";
+            //    var parameters = new
+            //    {
+            //        QuestionDetailID = id
+            //    };
+            //    result = connection.Execute(sql: sql, param: parameters, commandType: System.Data.CommandType.Text) > 0;
+            //    connection.Close();
+            //}
+            //return result;
             bool result = false;
             using (var connection = OpenConnection())
             {
-                var sql = @"DELETE FROM QuestionDetail
-                            FROM QuizQuestionAnswer qa
-                            INNER JOIN QuestionDetail AS qd ON qd.QuestionDetailID = qa.QuestionDetailId
-                            WHERE qd.QuestionDetailID = @QuestionDetailID
-                            GO
-                            SELECT qd.QuestionDetailID, qd.QuestionText, qa.QuizQuestionAnswerID, qa.AnswerText, qd.AccountId
-                            FROM QuestionDetail qd
-                            INNER JOIN QuizQuestionAnswer qa ON qa.QuestionDetailId = qd.QuestionDetailID
-                            WHERE qd.QuestionDetailID = @QuestionDetailID";
+                var sql = @"
+                DELETE FROM QuizQuestionAnswer
+                WHERE QuestionDetailId = @QuestionDetailID;
+
+                DELETE FROM QuestionDetail
+                WHERE QuestionDetailID = @QuestionDetailID;";
+
                 var parameters = new
                 {
                     QuestionDetailID = id
                 };
+
+                // Execute will return the total number of rows affected by all the statements in the SQL
                 result = connection.Execute(sql: sql, param: parameters, commandType: System.Data.CommandType.Text) > 0;
-                connection.Close();
+
             }
             return result;
         }
@@ -175,37 +195,17 @@ namespace UMS.Quiz.DataLayers.SQLServer
 
         public bool IsUsed(int id)
         {
-            bool result = false;
-            //using (var connection = OpenConnection())
-            //{
-            //    var sql = @"if exists(select * from Knowledges where KnowledgeId = @KnowledgeId)
-            //                    select 1
-            //                else 
-            //                    select 0";
-            //    var parameters = new { KnowledgeId = id };
-            //    result = connection.executescalar<bool>(sql: sql, param: parameters, commandtype: system.data.commandtype.text);
-            //    connection.close();
-            //}
-
             using (var connection = OpenConnection())
             {
-                var sql = @"IF EXISTS (SELECT * FROM QuestionDetail WHERE QuestionDetailID = @QuestionDetailID)
-                    SELECT 1
-                ELSE
-                    SELECT 0";
-
+                var sql = @"if exists(select * from QuestionDetail where QuestionDetailID = @QuestionDetailID)
+                                select 1
+                            else 
+                                select 0";
                 var parameters = new { QuestionDetailID = id };
+                var result = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
 
-                using (var command = new SqlCommand(sql, connection))
-                {
-                    command.Parameters.AddWithValue("@QuestionDetailID", id);
-                    result = (int)command.ExecuteScalar() == 1;
-                }
-
-                connection.Close();
+                return result > 0;
             }
-
-            return result;
         }
 
         public IList<QuestionDetail> List(int page = 1, int pageSize = 0, string searchValue = "")
@@ -314,7 +314,7 @@ namespace UMS.Quiz.DataLayers.SQLServer
 		                        AND (@AccountId = 0 OR qd.AccountId = @AccountId)
                             )
                             SELECT * FROM questionDetailCTE
-                            WHERE (@PageSize = 0) 
+                            WHERE (@PageSize = 0)
                                 OR (RowNumber BETWEEN (@Page - 1) * @PageSize + 1 and @Page * @PageSize)
                             order by RowNumber";
                 

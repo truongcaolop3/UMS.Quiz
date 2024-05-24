@@ -11,12 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.Services.AddDbContext<ApplicationDBContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("defaultConnection")));
-
-//builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-//    .AddEntityFrameworkStores<ApplicationDBContext>();
-
 builder.Services.AddRazorPages();
 
 builder.Services.AddSession(options =>
@@ -35,18 +29,17 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("defaultConnection")
-    ));
+builder.Services.AddDbContext<ApplicationDBContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("defaultConnection")));
 
-builder.Services.AddSession(option =>
-{
-    option.IdleTimeout = TimeSpan.FromMinutes(60);
-    option.Cookie.HttpOnly = true;
-    option.Cookie.IsEssential = true;
-});
+
 var app = builder.Build();
-
+//builder.Services.AddSession(option =>
+//{
+//    option.IdleTimeout = TimeSpan.FromMinutes(60);
+//    option.Cookie.HttpOnly = true;
+//    option.Cookie.IsEssential = true;
+//});
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

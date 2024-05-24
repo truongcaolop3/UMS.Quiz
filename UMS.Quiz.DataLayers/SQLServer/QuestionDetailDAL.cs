@@ -312,6 +312,8 @@ namespace UMS.Quiz.DataLayers.SQLServer
 		                        AND (@QuestionType = 0 OR qd.QuestionType = @QuestionType)
 		                        AND (@KnowledgeId = 0 OR k.KnowledgeId = @KnowledgeId)
 		                        AND (@AccountId = 0 OR qd.AccountId = @AccountId)
+
+
                             )
                             SELECT * FROM questionDetailCTE
                             WHERE (@PageSize = 0)

@@ -29,6 +29,7 @@ namespace UMS.Quiz.DomainModels
         /// số điểm cần lấy của một khối kiến thức đưa vào cấu trúc bộ đề 
         /// </summary>
         public int PointGet { get; set; }
+        
         /// <summary>
         /// số câu hỏi cần lấy của một khối kiến thức đưa vào cấu trúc bộ đề 
         /// </summary>
@@ -49,7 +50,8 @@ namespace UMS.Quiz.DomainModels
         /// <summary>
         /// lấy danh sách khối kiến thức
         /// </summary>
-        public ICollection<Knowledges> Knowledges { get; set; } = new HashSet<Knowledges>();
+        //public ICollection<Knowledges> Knowledges { get; set; } = new HashSet<Knowledges>();
+        public ICollection<TopicTemplateKnowledge> TopicTemplateKnowledges { get; set; } = new List<TopicTemplateKnowledge>();
         //public ICollection<ExamQuestion> ExamQuestions { get; set; } = new List<ExamQuestion>();
         public ICollection<ExamQuestions> ExamQuestions { get; set; } = new List<ExamQuestions>();
 

@@ -74,7 +74,27 @@
 
                         @if (oldQuestionDetailId != item.QuestionDetailID)
                         {
-                            <td rowspan="@countAnswersInQuestion">@item.QuestionType</td>
+                            @if (item.QuestionType == 1)
+                            {
+                                <td rowspan="@countAnswersInQuestion">
+                                    1 đáp án
+                                   
+                                </td>
+                            }
+                            @if (item.QuestionType == 2)
+                            {
+                                <td rowspan="@countAnswersInQuestion">
+                                    nhiều đáp án
+
+                                </td>
+                            }
+                            @if (item.QuestionType == 3)
+                            {
+                                <td rowspan="@countAnswersInQuestion">
+                                    điền từ
+                                </td>
+                            }
+
                             <td rowspan="@countAnswersInQuestion">@item.QuestionPoint</td>
                             <td rowspan="@countAnswersInQuestion" class="text-center">
                                 <a href="~/QuizDetail/Edit/@item.QuestionDetailID" class="btn btn-xs btn-info">

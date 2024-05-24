@@ -10,7 +10,7 @@ using UMS.Quiz.DomainModels;
 
 namespace UMS.Quiz.DataLayers.SQLServer
 {
-    public class TopicTemplateDAL :_BaseDAL, ICommonDAL<TopicTemplate>
+    public class TopicTemplateDAL :_BaseDAL, ITopicTemplateDAL
     {
         public TopicTemplateDAL(string connectionString) : base(connectionString)
         {
@@ -89,6 +89,35 @@ namespace UMS.Quiz.DataLayers.SQLServer
             return count;
         }
 
+        public int Count(string searchValue = "", string TermID = "",  int KnowledgeId = 0, int AccountId = 0, int ExamTime = 0)
+        {
+            if (!string.IsNullOrEmpty(searchValue))
+                searchValue = "%" + searchValue + "%";
+            using (var connection = OpenConnection())
+            {
+                var sql = @"SELECT COUNT(DISTINCT tt.TopicTemplateID)
+                            FROM TopicTemplate tt
+                            INNER JOIN TopicTemplateKnowledges ttk ON ttk.TopicTemplateID = tt.TopicTemplateID
+                            INNER JOIN Knowledges k ON ttk.KnowledgeID = k.KnowledgeId
+                            WHERE ((@SearchValue = N'') OR (tt.TopicTemplateName LIKE @SearchValue))
+                                AND (@ExamTime = 0 OR tt.ExamTime = @ExamTime)
+                                AND (@AccountId = 0 OR tt.AccountID = @AccountId)
+                                AND (@TermID = '' OR k.TermID = @TermID)";
+                var parameters = new
+                {
+                    SearchValue = searchValue ?? "",
+                    TermID = TermID,
+                    KnowledgeId = KnowledgeId,
+                    AccountId = AccountId,
+                    ExamTime = ExamTime
+                };
+
+                var count = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text);
+                return count;
+            }
+        }
+
+      
         public bool Delete(int id)
         {
             bool result = false;
@@ -158,77 +187,97 @@ namespace UMS.Quiz.DataLayers.SQLServer
             return result;
         }
 
+        public IList<TopicTemplate> List(int page = 1, int pageSize = 0, string searchValue = "", string TermID = "", int KnowledgeId = 0, int AccountId = 0, int ExamTime = 0)
+        {
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                searchValue = "%" + searchValue + "%";
+            }
+
+            using (var connection = OpenConnection())
+            {
+                var sql = @"
+                    ;WITH TopicTemplateCTE AS
+                    (
+                        SELECT
+                            tt.TopicTemplateID,
+                            tt.TopicTemplateName,
+                            tt.ExamTime,
+                            tt.PointGet,
+                            tt.QuantityGet,
+                            tt.AllQuantityGet,
+                            k.KnowledgeId,
+                            k.knowledgeName,
+                            k.TermID,
+                            t.TermName,
+                            ROW_NUMBER() OVER (PARTITION BY tt.TopicTemplateID ORDER BY tt.TopicTemplateID) as RowNumber
+                        FROM TopicTemplate tt
+                        INNER JOIN TopicTemplateKnowledges ttk ON ttk.TopicTemplateID = tt.TopicTemplateID
+                        INNER JOIN Knowledges k ON ttk.KnowledgeID = k.KnowledgeId
+                        INNER JOIN Terms t ON t.TermID = k.TermID
+                        WHERE ((@SearchValue = N'') OR (tt.TopicTemplateName LIKE @SearchValue) OR (tt.ExamTime LIKE @SearchValue) OR (tt.QuantityGet LIKE @SearchValue))
+                            AND (@ExamTime = 0 OR tt.ExamTime = @ExamTime)
+                            AND (@AccountId = 0 OR tt.AccountID = @AccountId)
+                            AND (@TermID = '' OR k.TermID = @TermID)
+                    )
+                    SELECT * FROM TopicTemplateCTE
+                    WHERE RowNumber = 1
+                        AND (@PageSize = 0 OR RowNumber BETWEEN (@Page - 1) * @PageSize + 1 AND @Page * @PageSize)
+                    ORDER BY RowNumber";
+
+                var parameters = new
+                {
+                    Page = page,
+                    PageSize = pageSize,
+                    SearchValue = searchValue,
+                    TermID = TermID,
+                    AccountId = AccountId,
+                    ExamTime = ExamTime,
+                };
+
+                var topicTemplateDictionary = new Dictionary<int, TopicTemplate>();
+
+                var data = connection.Query<TopicTemplate, Knowledges, TopicTemplate>(sql,
+                    (topicTemplate, knowledge) =>
+                    {
+                        if (!topicTemplateDictionary.TryGetValue(topicTemplate.TopicTemplateID, out var currentTopicTemplate))
+                        {
+                            currentTopicTemplate = topicTemplate;
+                            topicTemplateDictionary.Add(currentTopicTemplate.TopicTemplateID, currentTopicTemplate);
+                        }
+                        if (knowledge != null)
+                        {
+                            if (currentTopicTemplate.TopicTemplateKnowledges.All(ttk => ttk.KnowledgeID != knowledge.KnowledgeId))
+                            {
+                                currentTopicTemplate.TopicTemplateKnowledges.Add(new TopicTemplateKnowledge
+                                {
+                                    TopicTemplateID = currentTopicTemplate.TopicTemplateID,
+                                    Knowledge = knowledge
+                                });
+                            }
+                        }
+
+                        return currentTopicTemplate;
+                    },
+                    splitOn: "KnowledgeId",
+                    param: parameters,
+                    commandType: System.Data.CommandType.Text).ToList();
+
+                return data;
+            }
+        }
+
         public IList<TopicTemplate> List(int page = 1, int pageSize = 0, string searchValue = "")
         {
-            List<TopicTemplate> data = new List<TopicTemplate>();
-            if (!string.IsNullOrEmpty(searchValue))
-                searchValue = "%" + searchValue + "%";
-            using (var connection = OpenConnection())
-            {
-                var sql = @"with cte as
-                            (
-                             select	*, row_number() over (order by QuestionText) as RowNumber
-                             from	TopicTemplate 
-                             WHERE 
-                                (@searchValue IS NULL OR @searchValue = '') OR 
-                                (TopicTemplateName LIKE '%' + @TopicTemplateName + '%') OR 
-                                (ExamTime = @ExamTime) OR 
-                                (PointGet = @PointGet) OR 
-                                (QuantityGet = @QuantityGet)
-                            )
-                            select * from cte
-                            where  (@pageSize = 0) 
-                             or (RowNumber between (@page - 1) * @pageSize + 1 and @page * @pageSize)
-                            order by RowNumber";
-                var parameters = new
-                {
-                    page = page,
-                    pageSize = pageSize,
-                    searchValue = searchValue ?? ""
-                };
-                data = connection.Query<TopicTemplate>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text).ToList();
-                connection.Close();
-            }
-            return data;
+            throw new NotImplementedException();
         }
 
-      
         public IList<TopicTemplate> List(int page = 1, int pageSize = 0, string searchValue = "", string termId = "", int AccountId = 0)
         {
-            List<TopicTemplate> data = new List<TopicTemplate>();
-            if (!string.IsNullOrEmpty(searchValue))
-                searchValue = "%" + searchValue + "%";
-
-            using (var connection = OpenConnection())
-            {
-                var sql = @";with cte as
-                    (
-                        select	*, row_number() over (order by TopicTemplateName) as RowNumber
-                        from	Knowledges
-                        where	((@searchValue = N'') or (TopicTemplateName like @searchValue)) 
-                                and (@termId = N'' or TermID = @termId)
-                                and (@AccountId = N'' or AccountId = @AccountId)
-                    )
-                    select * from cte
-                    where  (@pageSize = 0) 
-                        or (RowNumber between (@page - 1) * @pageSize + 1 and @page * @pageSize)
-                    order by RowNumber";
-
-                var parameters = new
-                {
-                    page = page,
-                    pageSize = pageSize,
-                    searchValue = searchValue ?? "",
-                    termId = termId ?? "",
-                    AccountId = AccountId
-                };
-
-                data = connection.Query<TopicTemplate>(sql: sql, param: parameters, commandType: System.Data.CommandType.Text).ToList();
-                connection.Close();
-            }
-            return data;
+            throw new NotImplementedException();
         }
 
+        
         public bool Update(TopicTemplate data)
         {
             bool result = false;

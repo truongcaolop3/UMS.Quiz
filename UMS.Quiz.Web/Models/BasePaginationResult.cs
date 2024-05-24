@@ -56,6 +56,10 @@ namespace UMS.Quiz.Web.Models
     public class TopicTemplateSearchResult : BasePaginationResult
     {
         public List<TopicTemplate> Data { get; set; } = new List<TopicTemplate>();
+        public string? TermID { get; set; }
+        public string? TermName { get; set; }
+        public int AccountId { get; set; }
+        public int KnowledgeId { get; set; }
     }
 
     public class ExamQuestionSearchResult : BasePaginationResult

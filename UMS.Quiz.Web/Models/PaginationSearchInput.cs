@@ -22,4 +22,10 @@ namespace UMS.Quiz.Web.Models
         public string? KnowledgeName { get; set; }
 
     }
+    public class TopicTemplateInput : PaginationSearchInput
+    {
+        public int ExamTime { get; set; } = ExamTimeContant.DEFAULT;
+        public int KnowledgeId { get; set; }
+        public string? KnowledgeName { get; set; }
+    }
 }

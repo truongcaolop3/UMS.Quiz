@@ -7,11 +7,11 @@ using UMS.Quiz.DomainModels;
 
 namespace UMS.Quiz.DataLayers
 {
-    internal interface ITopicTemplateDAL : ICommonDAL<TopicTemplate>
+    public interface ITopicTemplateDAL : ICommonDAL<TopicTemplate>
     {
-        IList<TopicTemplate> List(int page = 1, int pageSize = 0, string searchValue = "", string termId = "", int knowledgeId = 0, int AccountId = 0);
+        IList<TopicTemplate> List(int page = 1, int pageSize = 0, string searchValue = "", string TermID = "",  int KnowledgeId = 0,int AccountId = 0, int ExamTime = 0);
 
-        int Count(string searchValue = "", string termId = "", int knowledgeId = 0, int AccountId = 0);
+        int Count(string searchValue = "", string TermID = "",int KnowledgeId = 0, int AccountId = 0, int ExamTime = 0);
     }
 
 }

@@ -29,8 +29,9 @@ namespace UMS.Quiz.DomainModels
         /// <summary>
         /// Id cấu trúc đề
         /// </summary>
-        public int? TopicTemplateID { get; set; }
-        public TopicTemplate? TopicTemplate { get; set; }
+        //public int? TopicTemplateID { get; set; }
+        //public TopicTemplate? TopicTemplate { get; set; }
+        public ICollection<TopicTemplateKnowledge> TopicTemplateKnowledges { get; set; } = new List<TopicTemplateKnowledge>();
 
         //public QuizQuestion? QuizQuestion { get; set; }
 

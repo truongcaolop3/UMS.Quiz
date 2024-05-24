@@ -7,20 +7,20 @@ namespace UMS.Quiz.Web.Data
 {
     public class ApplicationDBContext : DbContext /*IdentityDbContext<ApplicationUser>*/
     {
-       
+
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options)
         {
             Account = Set<Account>();
             Terms = Set<Terms>();
             Knowledges = Set<Knowledges>();
-            //QuizQuestions = Set<QuizQuestion>();
             QuestionDetail = Set<QuestionDetail>();
             QuizQuestionAnswer = Set<QuizQuestionAnswer>();
             TopicTemplate = Set<TopicTemplate>();
+            TopicTemplateKnowledges = Set<TopicTemplateKnowledge>();
             ExamQuestions = Set<ExamQuestions>();
             Exam = Set<Exam>();
             ExamDetailCandidates = Set<ExamDetailCandidates>();
-            ExamDetailAnswer = Set<ExamDetailAnswer>(); 
+            ExamDetailAnswer = Set<ExamDetailAnswer>();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -71,6 +71,10 @@ namespace UMS.Quiz.Web.Data
             modelBuilder.Entity<QuestionDetail>().HasKey(q => q.QuestionDetailID);
             modelBuilder.Entity<QuizQuestionAnswer>().HasKey(q => q.QuizQuestionAnswerID);
             modelBuilder.Entity<TopicTemplate>().HasKey(t => t.TopicTemplateID);
+
+            modelBuilder.Entity<TopicTemplateKnowledge>()
+            .HasKey(tk => new { tk.TopicTemplateID, tk.KnowledgeID });
+
             modelBuilder.Entity<ExamQuestions>().HasKey(e => e.ExamQuestionID);
             modelBuilder.Entity<Exam>().HasKey(e => e.ExamID);
             modelBuilder.Entity<ExamDetailCandidates>().HasKey(e => e.ExamDetailCandidatesID);
@@ -105,15 +109,25 @@ namespace UMS.Quiz.Web.Data
 
             // Thiết lập mối quan hệ một-nhiều giữa TopicTemplate và QuestionDetail
             modelBuilder.Entity<QuestionDetail>()
-                .HasOne(t => t.TopicTemplate) 
-                .WithMany(t => t.questionDetails) 
+                .HasOne(t => t.TopicTemplate)
+                .WithMany(t => t.questionDetails)
                 .HasForeignKey(t => t.TopicTemplateID);
 
-            // Thiết lập mối quan hệ một-nhiều giữa TopicTemplate và Knowledges
-            modelBuilder.Entity<Knowledges>()
-                .HasOne(t => t.TopicTemplate)
-                .WithMany(t => t.Knowledges)
-                .HasForeignKey(t => t.TopicTemplateID);
+            // Thiết lập mối quan hệ nhiều - nhiều TopicTemplate và Knowledges
+            modelBuilder.Entity<TopicTemplateKnowledge>()
+            .HasOne(tk => tk.TopicTemplate)
+            .WithMany(tt => tt.TopicTemplateKnowledges)
+            .HasForeignKey(tk => tk.TopicTemplateID);
+
+            modelBuilder.Entity<TopicTemplateKnowledge>()
+                .HasOne(tk => tk.Knowledge)
+                .WithMany(k => k.TopicTemplateKnowledges)
+                .HasForeignKey(tk => tk.KnowledgeID);
+            //// Thiết lập mối quan hệ một-nhiều giữa TopicTemplate và Knowledges
+            //modelBuilder.Entity<Knowledges>()
+            //    .HasOne(t => t.TopicTemplate)
+            //    .WithMany(t => t.Knowledges)
+            //    .HasForeignKey(t => t.TopicTemplateID);
 
             // Thiết lập mối quan hệ một-nhiều giữa TopicTemplate và ExamQuestion 
             modelBuilder.Entity<ExamQuestions>()
@@ -150,12 +164,13 @@ namespace UMS.Quiz.Web.Data
         public DbSet<Knowledges> Knowledges { get; set; }
         //public DbSet<QuizQuestion> QuizQuestions { get; set; }
         public DbSet<QuestionDetail> QuestionDetail { get; set; }
-        public DbSet<QuizQuestionAnswer> QuizQuestionAnswer { get; set;}
+        public DbSet<QuizQuestionAnswer> QuizQuestionAnswer { get; set; }
         public DbSet<TopicTemplate> TopicTemplate { get; set; }
+        public DbSet<TopicTemplateKnowledge> TopicTemplateKnowledges { get; set; }
         public DbSet<ExamQuestions> ExamQuestions { get; set; }
         public DbSet<Exam> Exam { get; }
-        public DbSet<ExamDetailCandidates> ExamDetailCandidates { get; set;}
-        public DbSet<ExamDetailAnswer> ExamDetailAnswer { get; set;}
+        public DbSet<ExamDetailCandidates> ExamDetailCandidates { get; set; }
+        public DbSet<ExamDetailAnswer> ExamDetailAnswer { get; set; }
         public DbSet<Account> Account { get; set; }
     }
 }

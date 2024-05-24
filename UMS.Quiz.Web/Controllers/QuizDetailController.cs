@@ -76,9 +76,9 @@ namespace UMS.Quiz.Web.Controllers
                 PageSize = input.PageSize,
                 SearchValue = input.SearchValue ?? "",
                 RowCount = rowCount,
-                Data = data,
                 KnowledgeId = input.KnowledgeId,
                 KnowledgeName = input.KnowledgeName,
+                Data = data,
             };
 
             // Lưu lại điều kiện tìm kiếm
@@ -106,6 +106,7 @@ namespace UMS.Quiz.Web.Controllers
         }
         public IActionResult Edit(int id)
         {
+
             ViewBag.Title = "Sửa câu hỏi trắc nghiệm";
             var questionDetail = CommonDataService.GetQuestionDetail(id);
 
@@ -134,11 +135,8 @@ namespace UMS.Quiz.Web.Controllers
         {
             //TODO: Kiểm soát dữ liệu trong model xem có hợp lệ hay không?
             //Yêu cầu: Tên khách hàng, tên giao dịch, Email và tỉnh thành không được để trống
-            //if (string.IsNullOrWhiteSpace(model.QuestionText))
-            //{
-            //    ModelState.AddModelError("QuestionText", "Tên khối kiến thức không được trống");
-            //}
-
+            if (string.IsNullOrWhiteSpace(model.QuestionText))
+                ModelState.AddModelError("QuestionText", "Câu hỏi không được trống");
             if (model.KnowledgeId > 0)
             {
                 model.knowledges = CommonDataService.GetKnowledges(model.KnowledgeId);
@@ -162,11 +160,6 @@ namespace UMS.Quiz.Web.Controllers
             if (model.QuestionDetailID == 0)
             {
                 ViewBag.Title = CREATE_TITLE;
-                //int termid = CommonDataService.AddTerm(Terms.);
-                //int ID = CommonDataService.AddQuizQuestion(modelquizQuestion);
-
-                //int idqd = CommonDataService.AddQuestionDetail(model);
-                //int idqa = CommonDataService.AddQuizQuestionAnswer(model);
                 int newQuestionDetailId = CommonDataService.AddQuestionDetail(model);
 
                 // trường hợp tạo sai
@@ -238,8 +231,6 @@ namespace UMS.Quiz.Web.Controllers
                             return View("Edit", model);
                         }
                     }
-
-                    
                 }
 
                 return View("Edit", model);

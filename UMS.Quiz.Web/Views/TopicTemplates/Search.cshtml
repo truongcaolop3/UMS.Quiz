@@ -1,0 +1,70 @@
+﻿@using UMS.Quiz.Web.Constants;
+@model UMS.Quiz.Web.Models.TopicTemplateSearchResult
+@{
+    Layout = null;
+}
+<div>
+    <p style="margin:10px 0 10px 0">
+        Có <strong>@Model.RowCount</strong> cấu trúc đề trong tổng <strong>@Model.PageCount</strong> trang
+    </p>
+    @if (Model.Data.Count == 0)
+    {
+        <p class="text-center text-danger">Không tìm thấy kết quả nào.</p>
+    }
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover ">
+            <thead>
+                <tr class="bg-light ">
+                    <th style="width:30px">STT</th>
+                    <th>Tên Cấu trúc đề</th>
+                    @* <th>Tên học phần</th> *@
+                    <th>Thời gian thi</th>
+                    <th>Câu hỏi</th>
+                    @* <th>Số khối kiến thức</th> *@
+                    <th style="width:110px " class="text-center">
+                        <a href="~/TopicTemplates/Create" class="btn btn-success " style="padding: 1px 6px; font-size: 20px">
+                            <i class="bi bi-plus-lg"></i>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var index = 0; index < Model.Data.Count; index++)
+                {
+                    var item = Model.Data[index];
+                    <tr>
+                        <td>@(index + 1)</td> <!-- Hiển thị số thứ tự -->
+                        <td>@item.TopicTemplateName</td>
+                        @* <td></td> *@
+                        <td>@item.ExamTime Phút</td>
+                        <td>@item.QuantityGet</td>
+                        <td class="text-center">
+                            <a href="~/TopicTemplates/Delete" class="btn btn-xs btn-danger delete-TopicTemplates">
+                                <i class="bi bi-x-circle-fill"></i>
+                            </a>
+                            <a href="~/TopicTemplates/Edit" class="btn btn-xs btn-info">
+                                <i class="bi bi-book"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @*Phân trang*@
+    <div class="box-footer text-center">
+        <ul class="pagination d-flex justify-content-center">
+            @for (int i = 1; i <= Model.PageCount; i++)
+            {
+                if (i == Model.Page)
+                {
+                    <li class="active page-item"><a class="page-link">@i</a></li>
+                }
+                else
+                {
+                    <li class="page-item "><a class="page-link" href="javascript:;" onclick="doSearch('#formSearch', @i)">@i</a></li>
+                }
+            }
+        </ul>
+    </div>
+</div> 

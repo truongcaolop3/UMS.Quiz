@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UMS.Quiz.Web.Data;
 
@@ -11,9 +12,10 @@ using UMS.Quiz.Web.Data;
 namespace UMS.Quiz.Web.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240522074419_refun")]
+    partial class refun
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -212,9 +214,14 @@ namespace UMS.Quiz.Web.Migrations
                     b.Property<string>("TermID")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("TopicTemplateID")
+                        .HasColumnType("int");
+
                     b.HasKey("KnowledgeId");
 
                     b.HasIndex("TermID");
+
+                    b.HasIndex("TopicTemplateID");
 
                     b.ToTable("Knowledges");
                 });
@@ -331,21 +338,6 @@ namespace UMS.Quiz.Web.Migrations
                     b.ToTable("TopicTemplate");
                 });
 
-            modelBuilder.Entity("UMS.Quiz.DomainModels.TopicTemplateKnowledge", b =>
-                {
-                    b.Property<int>("TopicTemplateID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("KnowledgeID")
-                        .HasColumnType("int");
-
-                    b.HasKey("TopicTemplateID", "KnowledgeID");
-
-                    b.HasIndex("KnowledgeID");
-
-                    b.ToTable("TopicTemplateKnowledges");
-                });
-
             modelBuilder.Entity("UMS.Quiz.DomainModels.Exam", b =>
                 {
                     b.HasOne("UMS.Quiz.DomainModels.ExamQuestions", "ExamQuestions")
@@ -390,7 +382,13 @@ namespace UMS.Quiz.Web.Migrations
                         .WithMany("Knowledges")
                         .HasForeignKey("TermID");
 
+                    b.HasOne("UMS.Quiz.DomainModels.TopicTemplate", "TopicTemplate")
+                        .WithMany("Knowledges")
+                        .HasForeignKey("TopicTemplateID");
+
                     b.Navigation("Terms");
+
+                    b.Navigation("TopicTemplate");
                 });
 
             modelBuilder.Entity("UMS.Quiz.DomainModels.QuestionDetail", b =>
@@ -421,25 +419,6 @@ namespace UMS.Quiz.Web.Migrations
                     b.Navigation("QuestionDetail");
                 });
 
-            modelBuilder.Entity("UMS.Quiz.DomainModels.TopicTemplateKnowledge", b =>
-                {
-                    b.HasOne("UMS.Quiz.DomainModels.Knowledges", "Knowledge")
-                        .WithMany("TopicTemplateKnowledges")
-                        .HasForeignKey("KnowledgeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("UMS.Quiz.DomainModels.TopicTemplate", "TopicTemplate")
-                        .WithMany("TopicTemplateKnowledges")
-                        .HasForeignKey("TopicTemplateID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Knowledge");
-
-                    b.Navigation("TopicTemplate");
-                });
-
             modelBuilder.Entity("UMS.Quiz.DomainModels.Exam", b =>
                 {
                     b.Navigation("examDetailCandidates");
@@ -457,8 +436,6 @@ namespace UMS.Quiz.Web.Migrations
 
             modelBuilder.Entity("UMS.Quiz.DomainModels.Knowledges", b =>
                 {
-                    b.Navigation("TopicTemplateKnowledges");
-
                     b.Navigation("questionDetails");
                 });
 
@@ -476,7 +453,7 @@ namespace UMS.Quiz.Web.Migrations
                 {
                     b.Navigation("ExamQuestions");
 
-                    b.Navigation("TopicTemplateKnowledges");
+                    b.Navigation("Knowledges");
 
                     b.Navigation("questionDetails");
                 });

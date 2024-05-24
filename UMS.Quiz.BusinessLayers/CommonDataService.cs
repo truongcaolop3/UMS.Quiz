@@ -23,7 +23,7 @@ namespace UMS.Quiz.BusinessLayers
         //private static readonly ICommonDAL<QuizQuestion> QuizQuestionDB;
         private static readonly IQuestionDetailDAL QuestionDetailDB;
         private static readonly IQuizQuestionAnswerDAL QuizQuestionAnswerDB;
-        private static readonly ICommonDAL<TopicTemplate> TopicTemplateDB;
+        private static readonly ITopicTemplateDAL TopicTemplateDB;
         private static readonly ICommonDAL<Account> AccountDB;
         private static readonly ICommonDAL<Terms> TermDB;
 
@@ -299,10 +299,10 @@ namespace UMS.Quiz.BusinessLayers
         /// <param name="pageSize"></param>
         /// <param name="searchValue"></param>
         /// <returns></returns>
-        public static List<TopicTemplate> ListOfTopicTemplate(out int rowCount, int page = 1, int pageSize = 0, string searchValue = "")
+        public static List<TopicTemplate> ListOfTopicTemplate(out int rowCount, int page = 1, int pageSize = 0, string searchValue = "", string TermID = "" ,int KnowledgeId = 0, int AccountId = 0, int ExamTime = 0)
         {
-            rowCount = TopicTemplateDB.Count(searchValue);
-            return TopicTemplateDB.List(page, pageSize, searchValue).ToList();
+            rowCount = TopicTemplateDB.Count(searchValue, TermID, KnowledgeId,AccountId, ExamTime);
+            return TopicTemplateDB.List(page, pageSize, searchValue, TermID, KnowledgeId, AccountId, ExamTime).ToList();
         }
         /// <summary>
         /// Lấy thông tin của một khối kiến thức theo mã học phần
